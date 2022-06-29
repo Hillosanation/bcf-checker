@@ -22,13 +22,13 @@ Look for the following variables in ``congruent-pickerv4.5.py``.
 
 ``SFinderDir`` - Paste in the directory of where your sfinder directory is. (Ex: nice try)
 
-``SequenceFile`` - File name of the sequence file containing the generated sequences. (Ex: sequence.txt)
+``SequenceFile`` - File name of the sequence file containing the generated sequences. (Ex: ``sequence.txt``)
 
-``_numSetupPieces`` - The number of pieces considered to be used in the setup (Ex: 4)
+``_numSetupPieces`` - The number of pieces considered to be used in the setup (Ex: ``4``)
 
-``_recurseDepth`` - The number of pieces that will be placed in total (Ex: 4)
+``_recurseDepth`` - The number of pieces that will be placed in total (Ex: ``4``)
 
-``SolveThresholdPercentage`` - Minimum solve chace chance the setup should have (between 0 and 1). The lower the minimum percent is, the more branches will the explored, the longer it will take. (Ex: 0.7595)
+``SolveThresholdPercentage`` - Minimum solve chace chance the setup should have (between 0 and 1). The lower the minimum percent is, the more branches will the explored, the longer it will take. (Ex: ``0.7595``)
 
 (Could I have made the arguments command-line instead of modifying the file? Yes.)
 
