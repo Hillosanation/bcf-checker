@@ -90,7 +90,7 @@ class Validator:
         return output.decode("utf-8")[:-1] #chop off \n
 
     def __ReturnSfinderOutput(self, SFinderCommand: str) -> str:
-        SFinderPath = os.path.join(SFinderDir, "sfinder.jar")
+        SFinderPath = os.path.join(SFinderDir, "sfinder-fixed-180.jar")
         return self.__ReturnCommandOutput(["java", "-jar", SFinderPath, *SFinderCommand.split(" ")], False)
 
     def __IndexesToFumen(self, Tetromino: str, Indexes: set) -> str:
@@ -105,7 +105,7 @@ class Validator:
         print("\n".join(CoverSequences), file=open(PatternPath, "w"))
 
         if(" " in PatternPath): raise NotImplementedError("Currently the file paths cannot contain whitespace.")
-        SfinderOutput = self.__ReturnSfinderOutput(f"percent -H use -t {Field} -P 1 -pp {PatternPath} -c 4 -d softdrop -th -1 -td 0 -fc 0")
+        SfinderOutput = self.__ReturnSfinderOutput(f"percent -H use -t {Field} -P 1 -pp {PatternPath} -c 4 -d softdrop -th -1 -td 0 -fc 0 -d 180")
         RegexMatch = re.search("success = ([\d.]+)%", SfinderOutput)
         if not isinstance(RegexMatch, re.Match): raise ValueError("No match was found.")
         return float(RegexMatch.group(1))/100
@@ -145,8 +145,7 @@ _numEqualPieces = 0
 _increasedSeePiecesPerPlacement = 0 # usually set to 1, as you see 1 new piece from the next bag for each piece you place.
 #remaining pieces are "blind", you have to conform to the constraints
 _recurseDepth = 4 #the number of pieces placed
-SolveThresholdPercentage = 0.8202 #the percentage of queues that a node should at least cover
-SolveThresholdPercentageOld = SolveThresholdPercentage
+SolveThresholdPercentage = 0.8381 #the percentage of queues that a node should at least cover
 
 class SetupPoolWithoutCover:
     # does not narrow down search with the piece indexes seen in the cover, rather calls sfinder directly.
@@ -174,6 +173,7 @@ class SetupPoolWithoutCover:
     # def __ReturnTree(self, CurrentPieceIndex: set, CoverSequences: set[str], CurrentSolvePercent: float) -> CommonFieldTree:
         if (self.Layer == _recurseDepth): #last layer, return the inputted FieldIndexes that are solvable
             print(f"New setup found: {set({CurrentPieceIndex}) | self.UsedPieceIndexes}")
+            # check if buildable by all queues, if so increase global threshold, else only increase local threshold
             # print(f"New best found: {set({CurrentPieceIndex}) | self.UsedPieceIndexes}, increasing threshold to {CurrentSolvePercent*100:.2f}")
             # global SolveThresholdPercentage
             # SolveThresholdPercentage = CurrentSolvePercent
@@ -249,9 +249,7 @@ class SetupPoolWithoutCover:
         Output = []
 
         for sequenceKey in newSeqDict.keys():
-            global SolveThresholdPercentage
-            SolveThresholdPercentage = SolveThresholdPercentageOld
-            print(f"Solve threshold reset: {SolveThresholdPercentage*100:.2f}")
+            print(f"Solve threshold base: {SolveThresholdPercentage*100:.2f}")
             print(f'trying: {sequenceKey}')
             
             # assume 0p is always possible
@@ -328,7 +326,7 @@ for i in range(len(Sequences)):
     SeeableSequence = sequence[0:SeeableLength] # 9 pieces are seen before 3p is placed
     AddToDict(SeqDict, SeeableSequence, {sequence})
 
-OutputFile = f'congruent_output_SS-JZ.txt'
+OutputFile = f'congruent_output_SS-IS.txt'
 
 #compute
 

@@ -2,7 +2,7 @@
 Checks whether setups are the best possible ones in a given sequence of queues. A succcessor of the oqb tree-searching code.
 
 # Dependancies
-* sfinder.jar
+* sfinder-fixed-180.jar (jstris 180)
 
 * npm
 * tetris-fumen
