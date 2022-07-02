@@ -3,7 +3,12 @@ Checks whether setups are the best possible ones in a given sequence of queues. 
 
 # Dependancies
 * sfinder.jar
+
+* npm
 * tetris-fumen
+
+* node
+* python3
 
 # Usage
 ## Generate target sequences

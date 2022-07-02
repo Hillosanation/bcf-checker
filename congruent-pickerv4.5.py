@@ -130,7 +130,6 @@ class BuildChecker:
     
     def PossibleToBuildv3(self, Indexes: set, NoRepeat: bool = True) -> bool: #no repeats or supersets allowed
     # def PossibleToBuildv3(self, Indexes: set[int]) -> bool: #no repeats or supersets allowed
-        print(Indexes)
         if tuple(sorted(Indexes)) in self.BuildableRecord:
             return False
         commandOutput = self.__ReturnCommandOutput(f"node check-index-buildable.js {' '.join(map(str, Indexes))}".split(" "), False)
@@ -146,14 +145,14 @@ _numEqualPieces = 0
 _increasedSeePiecesPerPlacement = 0 # usually set to 1, as you see 1 new piece from the next bag for each piece you place.
 #remaining pieces are "blind", you have to conform to the constraints
 _recurseDepth = 4 #the number of pieces placed
-SolveThresholdPercentage = 0.7897 #the percentage of queues that a node should at least cover
+SolveThresholdPercentage = 0.8202 #the percentage of queues that a node should at least cover
+SolveThresholdPercentageOld = SolveThresholdPercentage
 
 class SetupPoolWithoutCover:
     # does not narrow down search with the piece indexes seen in the cover, rather calls sfinder directly.
     # as a result, FieldIndex and CoverDict are absent
     TreeSucceedPercentage = 0.1 #include current tree if it contains at least this percentage of maximum child nodes
     ValidatorObj = Validator()
-
 
     def __init__(self, Layer: int, UsedPieceIndexes: set, prevBuildCheckerObj: BuildChecker): 
         self.Layer = Layer
@@ -169,15 +168,15 @@ class SetupPoolWithoutCover:
     
     def __CalculateSolvePercentage(self, UsedPieceIndexes: set, CoverSequences: set) -> float:
     # def __CalculateSolvePercentage(self, UsedPieceIndexes: set[int], CoverSequences: set[int]) -> float:
-        # return self.ValidatorObj.SfinderPercent(UsedPieceIndexes, CoverSequences)
-        return 0.4
+        return self.ValidatorObj.SfinderPercent(UsedPieceIndexes, CoverSequences)
     
     def __ReturnTree(self, CurrentPieceIndex: set, CoverSequences: set, CurrentSolvePercent: float) -> CommonFieldTree:
     # def __ReturnTree(self, CurrentPieceIndex: set, CoverSequences: set[str], CurrentSolvePercent: float) -> CommonFieldTree:
         if (self.Layer == _recurseDepth): #last layer, return the inputted FieldIndexes that are solvable
-            print(f"New best found: {set({CurrentPieceIndex}) | self.UsedPieceIndexes}, increasing threshold to {CurrentSolvePercent*100:.2f}")
-            global SolveThresholdPercentage
-            SolveThresholdPercentage = CurrentSolvePercent
+            print(f"New setup found: {set({CurrentPieceIndex}) | self.UsedPieceIndexes}")
+            # print(f"New best found: {set({CurrentPieceIndex}) | self.UsedPieceIndexes}, increasing threshold to {CurrentSolvePercent*100:.2f}")
+            # global SolveThresholdPercentage
+            # SolveThresholdPercentage = CurrentSolvePercent
             return CommonFieldTree(CurrentPieceIndex, CurrentSolvePercent, frozenset())
         
         AllUsedPieceIndexes = set()
@@ -197,10 +196,9 @@ class SetupPoolWithoutCover:
         possibleNextPieceIndexes = possibleNextPieceIndexes - AllUsedPieceIndexes
 
         # get union of all remaining pieceIndexes & filter pieces with same tetromino as piece
-        print(f"layer: {self.Layer}")
         if (self.Layer == 0): candidatePieceIndexes = {x for x in possibleNextPieceIndexes if self.prevBuildCheckerObj.PossibleToBuildv3(AllUsedPieceIndexes | {x}, False)} #i just want to sequences like I->Z->L->O from IO-ZL cant be missed by exploring I in IO-LZ
         else: candidatePieceIndexes = {x for x in possibleNextPieceIndexes if self.prevBuildCheckerObj.PossibleToBuildv3(AllUsedPieceIndexes | {x})}
-        
+
         newPool = SetupPoolWithoutCover(self.Layer+1, AllUsedPieceIndexes, self.prevBuildCheckerObj)
         if self.Layer == 0:
             Output = set()
@@ -251,6 +249,9 @@ class SetupPoolWithoutCover:
         Output = []
 
         for sequenceKey in newSeqDict.keys():
+            global SolveThresholdPercentage
+            SolveThresholdPercentage = SolveThresholdPercentageOld
+            print(f"Solve threshold reset: {SolveThresholdPercentage*100:.2f}")
             print(f'trying: {sequenceKey}')
             
             # assume 0p is always possible
@@ -327,7 +328,7 @@ for i in range(len(Sequences)):
     SeeableSequence = sequence[0:SeeableLength] # 9 pieces are seen before 3p is placed
     AddToDict(SeqDict, SeeableSequence, {sequence})
 
-OutputFile = f'congruent_output_SS-SO.txt'
+OutputFile = f'congruent_output_SS-JZ.txt'
 
 #compute
 
