@@ -14,11 +14,11 @@ While in sfinder's directory, generate the sequences you want the bcf of, using 
 
 Example: ```java -jar sfinder.jar util seq -hh yes -p 'SS,[LS]!,[TIOJZ]!,*p2' > 'sequence.txt'``` (Powershell)
 
-It is safe to only keep one of two sequences if they differ by only the first two pieces. (If fact, this reduces search time.)
+It is safe to only keep one of two sequences if they differ by only the first two pieces. (``\'SZ,[LS]!,[TIOJZ]!,\*p2\'`` and ``\'[SZ]!,[LS]!,[TIOJZ]!,\*p2\'`` should yield the same results.)
 
-Paste the file into the directory the source file of ``congruent-pickerv4.5.py`` is in.
+Paste the file into the directory ``bcf-checker.py`` is in.
 
-## Configure settings in ``congruent-pickerv4.5.py``
+## Configure settings in ``bcf-checker.py``
 
 Look for the following variables in ``Settings/config.txt``.
 
@@ -48,9 +48,9 @@ Collect all pieces from the layers of a tree to get a set of indexes correspondi
 
 Example:
 ```
-249	100.00%
-		61	96.19%
-				234	79.56%
-						251	75.95%
+254	100.00%
+	138	98.67%
+		252	86.71%
+			363	80.00%: v115@BhBtIeBtCeg0CeT4Bei0T4MeAgH
 ```
-means the set of indexes ``{249, 61, 234, 251}`` has a solve chance of ``75.95%``
+means the set of indexes ``{254, 138, 252, 363}``, representing the fumen ``v115@BhBtIeBtCeg0CeT4Bei0T4MeAgH`` has a solve chance of ``80.00%``
