@@ -1,0 +1,10 @@
+_numSetupPieces=4
+_numEqualPieces=0
+_increasedSeePiecesPerPlacement=0
+_recurseDepth=4
+SolveThresholdPercentage=0.9123
+TreeSucceedPercentage=0.1
+SFinderDir=****
+SequenceFile=sequence.txt
+OutputFile=input/congruent_output_SS-ZO.txt
+SkipMirror=0
