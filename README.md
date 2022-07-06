@@ -18,7 +18,7 @@ It is safe to only keep one of two sequences if they differ by only the first tw
 
 Paste the file into the directory ``bcf-checker.py`` is in.
 
-## Configure settings in ``bcf-checker.py``
+## Configure settings in ``config.txt``
 
 Look for the following variables in ``Settings/config.txt``.
 
