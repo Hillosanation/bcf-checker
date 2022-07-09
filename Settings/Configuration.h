@@ -5,15 +5,19 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
+#include "../PercentageRecord.h"
 using std::set;
 using std::map;
 using std::string;
 using std::vector;
 
 class Configuration { //TODO: global singleton?
-	void SetConfig(vector<string> Settings);
+	void SetConfig(vector<string> Settings, vector<vector<string>> Percentages);
+
+	PercentageRecord& PercentageRecordObj;
 
 public:
+	//OI YA BIG DUMMY, CHANGE THE VALUES IN sequence.txt AIGHT? THESE WILL BE OVERWRITTEN BY THOSE
 	int _numSetupPieces = 4;
 	int _numEqualPieces = 0;
 	int _increasedSeePiecesPerPlacement = 0; // usually set to 1, as you see 1 new piece from the next bag for each piece you place.
@@ -29,8 +33,8 @@ public:
 	std::filesystem::path SFinderDir = R"(****)";
 	const std::filesystem::path WorkingDir = std::filesystem::current_path();
 	//FullBag = { "T", "I", "O", "J", "L", "S", "Z" }
-	string SequenceFilePath = "input/sequence.txt";
+	string SequenceFilePath = "sequence.txt";
 	string OutputFile = "congruent_output_SO-TJ.txt";
 
-	Configuration();
+	Configuration(PercentageRecord& extPercentageRecordObj);
 };

@@ -2,10 +2,12 @@
 #include <vector>
 #include <set>
 #include "../Conversion/FieldConverter.h"
+#include "../Settings/Configuration.h"
 
 class BuildChecker {
 private:
     FieldConverter& FieldConverterObj;
+    Configuration& Config;
 
     std::set<std::set<int>> BuildRecord;
 
@@ -20,7 +22,7 @@ private:
     bool isAllPiecesSupported(vector<BoolLine> SeparatedFields, BoolLine CombinedField);
 
 public:
-    BuildChecker(FieldConverter& extpFieldConverter);
+    BuildChecker(FieldConverter& extpFieldConverter, Configuration& Config);
 
     bool isBuildable(std::set<int> Indexes, bool NoRepeat);
 

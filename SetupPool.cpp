@@ -43,15 +43,12 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
 
     if (Layer == Config._recurseDepth) {
         std::cout << "New setup found: " << SetToString(AllUsedPieceIndexes) << "\n";
-        set<string> SetupSequences;
-        for (const auto &entry : BestPercentages) {
-            SetupSequences.insert(entry.first);
-        }
+        set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
         for (const auto & sequence : ValidatorObj.ReturnCoveredQueues(AllUsedPieceIndexes, SetupSequences)) {
-            BestPercentages[sequence] = RoundToDP(CurrentSolvePercent, 4);
+            PercentageRecordObj.UpdatePercentage(sequence, RoundToDP(CurrentSolvePercent, 4));
         };
         
-        std::cout << "Current best: " << PercentageMapToString(BestPercentages) << "\n";
+        std::cout << "Current best: " << PercentageRecordObj.BestPercentagesString() << "\n";
         
         //print out the global array of percentage each time a better field is found
         //"current best for each sequence: ..."
@@ -119,7 +116,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
     //}
 
 
-    SetupPoolWithoutCover newPool(Layer + 1, AllUsedPieceIndexes, BuildCheckerObj, ValidatorObj, BestPercentages, Config);
+    SetupPoolWithoutCover newPool(Layer + 1, AllUsedPieceIndexes, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
     if (Layer == 0) {
         vector<CommonFieldTree> OutputNodes;
         std::cout << "candidates(" << Layer << "): " << SetToString(AllUsedPieceIndexes) << " + " << SetToString(candidatePieceIndexes) << "\n";
@@ -155,11 +152,10 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
                 std::cout << "trying: " << SetToString(nextUsedPieceIndexes) << "\n";
                 double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieceIndexes, CandidateCoverSequences);
                 //std::cout << nextSolvePercent;
-                double currentSolveThresholdPercentage = BestPercentages[SetupPieceSequence];
+                double currentSolveThresholdPercentage = PercentageRecordObj.GetThreshold();
                 std::cout << RoundToDP(nextSolvePercent, 4)*100 << " " << RoundToDP(currentSolveThresholdPercentage, 4)*100 << "\n";
                 
                 if (RoundToDP(nextSolvePercent, 4) < RoundToDP(currentSolveThresholdPercentage, 4)) continue;
-                //now changing to bestpercentages, it needs which sequence it is working from. This is only attainable from the layer=0, as subsequent layers take off some pieces
                 std::cout << std::fixed << std::setprecision(2);
                 std::cout << "progress: " << SetToString(nextUsedPieceIndexes) << ", " << nextSolvePercent * 100 << "\n";
 
@@ -195,21 +191,22 @@ vector<CommonFieldTree> SetupPoolWithoutCover::Start(set<string>& Sequences) {
         vector<CommonFieldTree> Output;
 
         for (const auto& sequenceEntry : newSeqMap) {
-            BestPercentages[sequenceEntry.first] = Config.SolveThresholdPercentage;
+            PercentageRecordObj.UpdatePercentage(sequenceEntry.first, Config.SolveThresholdPercentage);
         }
 
-        SetupPoolWithoutCover newPool(Layer + 1, {}, BuildCheckerObj, ValidatorObj, BestPercentages, Config);
+        SetupPoolWithoutCover newPool(Layer + 1, {}, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
 
         for (const auto& sequenceEntry : newSeqMap) {
             std::cout << std::fixed << std::setprecision(2);
-            std::cout << "Solve threshold base: " << BestPercentages[sequenceEntry.first] * 100 << "\n";
+            std::cout << "Solve threshold base: " << PercentageRecordObj.BestPercentagesString() << "\n";
             std::cout << "trying: " << sequenceEntry.first << "\n";
 
             //double nextSolvePercent = ValidatorObj.SfinderPercent({}, sequenceEntry.second);
             //assuming 0p always passes percentage check
             double nextSolvePercent = 1.0;
-            if (nextSolvePercent < BestPercentages[sequenceEntry.first]) continue;
+            if (nextSolvePercent < PercentageRecordObj.GetThreshold()) continue;
             Output.push_back(newPool.ReturnTree({}, sequenceEntry.second, nextSolvePercent, sequenceEntry.first));
+            PercentageRecordObj.AddToIgnoredSequences(sequenceEntry.first);
         }
         return Output;
     }

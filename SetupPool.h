@@ -8,6 +8,7 @@
 #include "./Validation/Validator.h"
 #include "./Settings/Configuration.h"
 #include "./Misc/CommonDataTypes.h"
+#include "./PercentageRecord.h"
 
 using std::set;
 using std::map;
@@ -22,7 +23,7 @@ private:
     set<int> UsedPieceIndexes;
     BuildChecker& BuildCheckerObj; //const?
     Validator& ValidatorObj; //const?
-    map<string, double>& BestPercentages;
+    PercentageRecord& PercentageRecordObj;
     Configuration& Config;
 
     map<string, set<string>> CreateNewSeqMap(const set<string>& Sequences, int SamePieces);
@@ -36,8 +37,8 @@ private:
     double RoundToDP(double x, int DecimalPlaces);
 
 public:
-    SetupPoolWithoutCover(int layer, set<int> usedPieceIndexes, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, map<string, double>& extBestPercentages, Configuration& extConfig) :
-        Layer(layer), UsedPieceIndexes(usedPieceIndexes), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), BestPercentages(extBestPercentages), Config(extConfig) {};
+    SetupPoolWithoutCover(int layer, set<int> usedPieceIndexes, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
+        Layer(layer), UsedPieceIndexes(usedPieceIndexes), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
 
     vector<CommonFieldTree> Start(set<string>& Sequences);
 };

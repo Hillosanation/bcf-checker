@@ -1,4 +1,5 @@
 #include "BuildChecker.h"
+#include "../Misc/CommonDataTypes.h"
 #include <stdexcept>
 
 using std::vector;
@@ -48,7 +49,18 @@ BuildChecker::BoolLine BuildChecker::IntVecToBoolVec(vector<int> IntVec) {
     return Output;
 }
 
+set<int> MirrorIndexes(set<int> Indexes) {
+    set<int> Output;
+    for (const auto& index : Indexes) {
+        Output.insert(MirrorMap.at(index));
+    }
+    return Output;
+}
+
 bool BuildChecker::isBuildable(std::set<int> Indexes, bool NoRepeat = true) {
+    if (Config.SkipMirror and BuildRecord.find(MirrorIndexes(Indexes)) != BuildRecord.end()) {
+        return false;
+    }
     if (BuildRecord.find(Indexes) != BuildRecord.end()) {
         return false;
     }
@@ -68,4 +80,4 @@ bool BuildChecker::isBuildable(std::set<int> Indexes, bool NoRepeat = true) {
     return isAllPiecesSupported(separatedFields, combinedField);
 }
 
-BuildChecker::BuildChecker(FieldConverter& extpFieldConverter) : FieldConverterObj(extpFieldConverter) {}
+BuildChecker::BuildChecker(FieldConverter& extpFieldConverter, Configuration& extConfig) : FieldConverterObj(extpFieldConverter), Config(extConfig) {}

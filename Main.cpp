@@ -1,5 +1,6 @@
 #include "./Settings/Configuration.h"
 #include "./Misc/CommonDataTypes.h"
+#include "./PercentageRecord.h"
 #include "./SetupPool.h"
 #include "./TreeMerger.h"
 #include "./Conversion/FieldConverter.h"
@@ -33,7 +34,9 @@ void PrintTree(CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
 int main() {
     //prep
     std::cout << "Begin prep\n";
-    Configuration Config;
+    PercentageRecord PercentageRecordObj;
+    Configuration Config(PercentageRecordObj);
+    std::cout << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     
     set<string> Sequences;
     std::ifstream SequenceStream(Config.WorkingDir / Config.SequenceFilePath);
@@ -45,11 +48,10 @@ int main() {
 
     std::cout << "Begin searching for congruents\n";
     FieldConverter FieldConverterObj;
-    BuildChecker BuildCheckerObj(FieldConverterObj);
+    BuildChecker BuildCheckerObj(FieldConverterObj, Config);
     Validator ValidatorObj(FieldConverterObj, Config);
-    map<string, double> BestPercentages = {};
 
-    vector<CommonFieldTree> QueueTrees = SetupPoolWithoutCover(-1, set<int>(), BuildCheckerObj, ValidatorObj, BestPercentages, Config).Start(Sequences);
+    vector<CommonFieldTree> QueueTrees = SetupPoolWithoutCover(-1, set<int>(), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
 
     vector<CommonFieldTree> AllTrees;
     for (const auto& tree : QueueTrees) {
@@ -64,10 +66,10 @@ int main() {
     
     //output
 
-    std::cout << "Best chance: " << PercentageMapToString(BestPercentages) << "\n";
     std::cout << "writing: " << Config.OutputFile << "\n";
 
     std::ofstream OutputStream(Config.WorkingDir / Config.OutputFile);
+    OutputStream << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     for (const auto& tree : AllTrees) {
         PrintTree(tree, 0, OutputStream);
     }

@@ -34,13 +34,3 @@ vector<vector<string>> ReadCSV(std::ifstream& FileStream) {
     }
     return CSVOutput;
 }
-
-string PercentageMapToString(map<string, double> PercentageMap) {
-    string Output;
-    for (const auto& Entry : PercentageMap) {
-        std::ostringstream tmp;
-        tmp << Entry.second;
-        Output += Entry.first + ": " + tmp.str() + "; ";
-    }
-    return "{" + Output.substr(0,Output.length()-2) + "}";
-};
