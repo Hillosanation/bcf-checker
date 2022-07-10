@@ -203,7 +203,7 @@ vector<CommonFieldTree> SetupPoolWithoutCover::Start(set<string>& Sequences) {
 
             //double nextSolvePercent = ValidatorObj.SfinderPercent({}, sequenceEntry.second);
             //assuming 0p always passes percentage check
-            double nextSolvePercent = 1.0;
+            double nextSolvePercent = 1.00;
             if (nextSolvePercent < PercentageRecordObj.GetThreshold()) continue;
             Output.push_back(newPool.ReturnTree({}, sequenceEntry.second, nextSolvePercent, sequenceEntry.first));
             PercentageRecordObj.AddToIgnoredSequences(sequenceEntry.first);

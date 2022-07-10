@@ -1,9 +1,17 @@
 #include "PercentageRecord.h"
 #include <sstream>
+#include <iostream> //debug
 
 void PercentageRecord::UpdateMinimum() {
+	RunningMinimum = 1.00;
+	//std::cout << "Ignored: ";
+	//for (auto x : IgnoredSequences) {
+	//	std::cout << x << " ";
+	//}
+	//std::cout << "\n";
 	for (const auto& entry : BestPercentages) {
 		if (std::find(IgnoredSequences.begin(), IgnoredSequences.end(), entry.first) == IgnoredSequences.end()) {
+			//std::cout << RunningMinimum << "<-" << entry.second << "\n";
 			RunningMinimum = std::min(RunningMinimum, entry.second);
 		}
 	}
@@ -26,6 +34,7 @@ void PercentageRecord::UpdatePercentage(string Key, double Value) {
 
 void PercentageRecord::AddToIgnoredSequences(string newSequence) {
 	IgnoredSequences.insert(newSequence);
+	UpdateMinimum();
 }
 
 set<string> PercentageRecord::ReturnSetupSequences() {
