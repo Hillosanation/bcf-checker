@@ -4,6 +4,7 @@ _increasedSeePiecesPerPlacement=0
 _recurseDepth=4
 SolveThresholdPercentage=0.6000
 TreeSucceedPercentage=0.01
+SFinderDir=****
 SequenceFile=input/sequence.txt
 OutputFile=output/congruent_output_LL-JZ.txt
 SkipMirror=1
