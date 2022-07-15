@@ -22,19 +22,34 @@ Paste the file into the directory ``bcf-checker.py`` is in.
 
 Look for the following variables in ``Settings/config.txt``.
 
-``\_numSetupPieces`` - The number of pieces considered to be used in the setup (Ex: ``4``)
+``_numSetupPieces`` - The number of pieces considered to be used in the setup (Ex: ``4``)
 
-``\_recurseDepth`` - The number of pieces that will be placed in total (Ex: ``4``)
-
-``SolveThresholdPercentage`` - Minimum solve chace chance the setup should have (between 0 and 1). The lower the minimum percent is, the more branches will the explored, the longer it will take. (Ex: ``0.7595``)
+``_recurseDepth`` - The number of pieces that will be placed in total (Ex: ``4``)
 
 ``SFinderDir`` - Paste in the directory of where your sfinder directory is. (Ex: nice try)
 
-``SequenceFile`` - File name of the sequence file containing the generated sequences. (Ex: ``sequence.txt``)
+``SequenceFile`` - File path of the sequence file containing the generated sequences. (Ex: ``input/sequence.txt``)
 
-Save the file and start running to begin searching for the bcf.
+``OutputFile`` - File path of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
+
+``SkipMirror`` - Does not try piece sequences with explored mirrored setups(boolean). (Ex: ``1``)
+
+``SkipCongruent`` (soon)
+
+## Set percentages in ``Best_Percentages.txt``
+
+Set the best known percentage for the specific queue in csv format. You only need to specify queues up to ``_numSetupPieces + _numEqualPieces``.
+
+Ex:
+```
+SSLS,0.7595
+SSSL,0.7595
+```
+
+Save the files and start running the .exe file to begin searching for the bcf.
 
 ## Extracting setups
+
 ### Extracting setups from console output
 
 You could pipe the output from the command line to a file like so:
