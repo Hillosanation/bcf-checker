@@ -149,11 +149,11 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
                     CandidateCoverSequences.insert(sequence.replace(pos, 1, ""));
                 }
 
-                std::cout << "trying: " << SetToString(nextUsedPieceIndexes) << "\n";
+                //std::cout << "trying: " << SetToString(nextUsedPieceIndexes) << "\n";
                 double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieceIndexes, CandidateCoverSequences);
                 //std::cout << nextSolvePercent;
                 double currentSolveThresholdPercentage = PercentageRecordObj.GetThreshold();
-                std::cout << RoundToDP(nextSolvePercent, 4)*100 << " " << RoundToDP(currentSolveThresholdPercentage, 4)*100 << "\n";
+                //std::cout << RoundToDP(nextSolvePercent, 4)*100 << " " << RoundToDP(currentSolveThresholdPercentage, 4)*100 << "\n";
                 
                 if (RoundToDP(nextSolvePercent, 4) < RoundToDP(currentSolveThresholdPercentage, 4)) continue;
                 std::cout << std::fixed << std::setprecision(2);
@@ -175,6 +175,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
                     }
                 }
             }
+            std::cout << "--End of Layer " << Layer << "--\n";
             //if there isn't at least one valid cover for the current set of sequences, it fails to completely cover, so return negative solve percentage
             int failBranches = (LoopCount + 1) - (int)OutputNodes.size();
             if (failBranches / newSeqMap.size() > (1 - Config.TreeSucceedPercentage)) return { -1, -1, {} };

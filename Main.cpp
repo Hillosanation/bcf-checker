@@ -61,8 +61,8 @@ int main() {
 
     //merge
 
-    std::cout << "Merging trees\n";
-    AllTrees = TreeMerger().ReturnMergedTrees(AllTrees);
+    //std::cout << "Merging trees\n";
+    //AllTrees = TreeMerger().ReturnMergedTrees(AllTrees);
     
     //output
 
