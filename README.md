@@ -1,16 +1,16 @@
-# bcf-checker
+# bcf-checker (best-chance-field checker)
 Checks whether setups are the best possible ones in a given sequence of queues. A succcessor of the oqb tree-searching code.
 
-# Dependancies
+# dependencies
 * sfinder-fixed-180.jar (jstris 180)
 
-* node
+* [node.js](https://nodejs.org/en/)
 * glueFumen.js (included)
 
 # Usage
 ## Generate target sequences
 
-While in sfinder's directory, generate the sequences you want the bcf of, using ``util fig``, and pipe the output to a file. 
+While in sfinder's directory, generate the sequences you want the BCF of, using ``util fig``, and pipe the output to a file. 
 
 Example: ```java -jar sfinder.jar util seq -hh yes -p 'SS,[LS]!,[TIOJZ]!,*p2' > 'sequence.txt'``` (Powershell)
 
@@ -26,7 +26,7 @@ Look for the following variables in ``Settings/config.txt``.
 
 ``_recurseDepth`` - The number of pieces that will be placed in total (Ex: ``4``)
 
-``SFinderDir`` - Paste in the directory of where your sfinder directory is. (Ex: nice try)
+``SFinderDir`` - Paste in the directory where your sfinder directory is. (Ex: nice try)
 
 ``SequenceFile`` - File path of the sequence file containing the generated sequences. (Ex: ``input/sequence.txt``)
 
@@ -46,7 +46,7 @@ SSLS,0.7595
 SSSL,0.7595
 ```
 
-Save the files and start running the .exe file to begin searching for the bcf.
+Save the files and start running the .exe file to begin searching for the BCF.
 
 ## Extracting setups
 
@@ -54,9 +54,9 @@ Save the files and start running the .exe file to begin searching for the bcf.
 
 You could pipe the output from the command line to a file like so:
 
-```bcf-picker.exe > 'output.txt'``` (Powershell)
+```bcf-checker.exe > 'output.txt'``` (Powershell)
 
-you could use this regex: ``(v115@.+)`` to find the relavent setups from the console output.
+you could use this regex: ``(v115@.+)`` to find the relevant setups from the console output.
 
 ### Extracting setups from file output
 Collect all pieces from the layers of a tree to get a set of indexes corresponding to the solve percentage provided in the last layer
