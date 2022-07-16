@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <fstream>
 #include <regex>
-#include "./Validator.h"
 #include <iostream>
+#include "./Validator.h"
+#include "../Settings/Configuration.h"
 
 vector<string> Validator::RunCommand(string Command, bool LogCommand = true) {
     string WrappedCommand = "\"" + Command + "\"";
@@ -43,7 +44,7 @@ vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vecto
         FieldStream.close();
 
         fs::path CSVFilePath = Config.WorkingDir / "temp/cover_temp.csv";
-        ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d softdrop -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
+        ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d 180 -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
         std::ifstream CSVFileStream(CSVFilePath);
         return ReadCSV(CSVFileStream);
     }
@@ -74,7 +75,7 @@ float Validator::SfinderPercent(std::set<int> UsedPieceIndexes, std::set<string>
         PatternStream << coverSequence << "\n";
     }
     PatternStream.close();
-    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + Fumen + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -d softdrop -th -1 -td 0 -fc 0 -d 180");
+    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + Fumen + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -th -1 -td 0 -fc 0 -d 180");
 
     std::regex Regex(R"(success = ([\d.]+)%)");
     string Result;
