@@ -14,7 +14,7 @@ While in sfinder's directory, generate the sequences you want the bcf of, using 
 
 Example: ```java -jar sfinder.jar util seq -hh yes -p 'SS,[LS]!,[TIOJZ]!,*p2' > 'sequence.txt'``` (Powershell)
 
-It is safe to only keep one of two sequences if they differ by only the first two pieces. (``\'SZ,[LS]!,[TIOJZ]!,\*p2\'`` and ``\'[SZ]!,[LS]!,[TIOJZ]!,\*p2\'`` should yield the same results.)
+It is safe to only keep one of two sequences if they differ by only the first two pieces. (``'SZ,[LS]!,[TIOJZ]!,*p2'`` and ``'[SZ]!,[LS]!,[TIOJZ]!,*p2'`` should yield the same results.)
 
 Paste the file into the directory ``bcf-checker.py`` is in.
 
