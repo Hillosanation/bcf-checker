@@ -2,36 +2,64 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
-#include <algorithm>
 #include "../Misc/CommonDataTypes.h"
 
-void Configuration::SetConfig(vector<string> Settings, vector<vector<string>> PercentageSettings) {
-	if (Settings.size() != 10) throw std::invalid_argument("Wrong amount of provided variables to set.");
-	_numSetupPieces = std::stoi(Settings[0]);
-	_numEqualPieces = std::stoi(Settings[1]);
-	_increasedSeePiecesPerPlacement = std::stoi(Settings[2]);
-	_recurseDepth = std::stoi(Settings[3]);
+Configuration::Configuration(PercentageRecord& extPercentageRecordObj, int argc, char* argv[]) {
+	parser.add_argument("-vis", "--visible-pieces")
+		.required()
+		.scan<'d', int>(); //combine setup&same?
+	//remaining pieces are "blind", you have to conform to the constraints
+	parser.add_argument("-inc", "--increased-vision")
+		.default_value(1)
+		.scan<'d', int>().
+		help("Usually set to 1, as you see 1 new piece from the next bag for each piece you place.");
+	parser.add_argument("-pp", "--placed-pieces")
+		.required()
+		.scan<'d', int>()
+		.help("The number of pieces placed.");
+	parser.add_argument("-tsp", "--tree-succeed-percentage")
+		.default_value(0.001)
+		.scan<'g', double>()
+		.help("Include current tree if it contains at least this percentage of maximum child nodes");
 
-	SolveThresholdPercentage = std::atof(Settings[4].c_str());
-	TreeSucceedPercentage = std::atof(Settings[5].c_str());
+	parser.add_argument("-sd", "--sfinder-directory")
+		.required();
+	parser.add_argument("-sp", "--sequence-path")
+		.default_value((string)"input/sequence.txt");
+	parser.add_argument("-op", "--output-path")
+		.default_value((string)"output/congruent_output_SZ-L.txt");
+	parser.add_argument("-sm", "--skip-mirror")
+		.default_value(true)
+		.help("Does not check mirror setups, only useful when exact mirrors can be built");
 
-	SFinderDir = Settings[6];
-	SequenceFilePath = Settings[7];
-	OutputFile = Settings[8];
-	SkipMirror = (bool)std::stoi(Settings[9]);
-	for (const auto& entry : PercentageSettings) {
-		PercentageRecordObj.UpdatePercentage(entry[0], std::stod(entry[1]));
+	try {
+		parser.parse_args(argc, argv);
 	}
+	catch (const std::runtime_error& err) {
+		std::cerr << err.what() << std::endl;
+		std::cerr << parser;
+		std::exit(1);
+	}
+
+	std::ifstream BestPercentageStream(WorkingDir / "input/Best_Percentages.txt");
+	for (const auto& entry : ReadCSV(BestPercentageStream)) {
+		extPercentageRecordObj.UpdatePercentage(entry[0], std::stod(entry[1]));
+	}
+
 }
 
-Configuration::Configuration(PercentageRecord& extPercentageRecordObj) : PercentageRecordObj(extPercentageRecordObj) {
-	std::ifstream ConfigStream(WorkingDir / "Settings/config.txt");
-	string line;
-	vector<string> Settings;
-	while (std::getline(ConfigStream, line)) {
-		auto it = std::find(line.begin(), line.end(), '=');
-		Settings.push_back(line.substr(it - line.begin() + 1));
-	}
-	std::ifstream BestPercentageStream(WorkingDir / "Settings/Best_Percentages.txt");
-	SetConfig(Settings, ReadCSV(BestPercentageStream));
-}
+int Configuration::GetValueInt(string key) {
+	return parser.get<int>(key);
+};
+
+double Configuration::GetValueDouble(string key) {
+	return parser.get<double>(key);
+};
+
+bool Configuration::GetValueBool(string key) {
+	return parser.get<bool>(key);
+};
+
+string Configuration::GetValueString(string key) {
+	return parser.get<string>(key);
+};

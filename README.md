@@ -1,16 +1,18 @@
-# bcf-checker
-Checks whether setups are the best possible ones in a given sequence of queues. A succcessor of the oqb tree-searching code.
+# bcf-checker (best-chance-field checker)
+Checks whether setups are the best possible ones in a given sequence of queues. A successor of the oqb tree-searching code.
 
-# Dependancies
-* sfinder-fixed-180.jar (jstris 180)
+# Dependencies
+* [sfinder-fixed-180.jar](https://github.com/Theoluky/sfinder_fixed_180)
 
-* node
-* glueFumen.js (included)
+* [node.js](https://nodejs.org/en/)
+* glueFumen.js (modified from [Marfung37/GluingFumens](https://github.com/Marfung37/GluingFumens), included)
+
+* [p-ranav/argparse](https://github.com/p-ranav/argparse) (included)
 
 # Usage
 ## Generate target sequences
 
-While in sfinder's directory, generate the sequences you want the bcf of, using ``util fig``, and pipe the output to a file. 
+While in sfinder's directory, generate the sequences you want the BCF of, using ``util fig``, and pipe the output to a file. 
 
 Example: ```java -jar sfinder.jar util seq -hh yes -p 'SS,[LS]!,[TIOJZ]!,*p2' > 'sequence.txt'``` (Powershell)
 
@@ -18,27 +20,35 @@ It is safe to only keep one of two sequences if they differ by only the first tw
 
 Paste the file into the directory ``bcf-checker.py`` is in.
 
-## Configure settings in ``config.txt``
+## Add arguments in the command line
 
-Look for the following variables in ``Settings/config.txt``.
+Required:
 
-``_numSetupPieces`` - The number of pieces considered to be used in the setup (Ex: ``4``)
+* ``-vis`` (``-visible-pieces``) - The number of pieces that are taken into account before placing any pieces. (Ex: ``4``)
 
-``_recurseDepth`` - The number of pieces that will be placed in total (Ex: ``4``)
+* ``-pp`` (``--placed-pieces``) - The total number of pieces placed in the setup. (Currently cannot exceed 4.) (Ex: ``4``)
 
-``SFinderDir`` - Paste in the directory of where your sfinder directory is. (Ex: nice try)
+* ``-sd`` (``--sfinder-directory``) - The directory ``sfinder.jar`` is located in.
 
-``SequenceFile`` - File path of the sequence file containing the generated sequences. (Ex: ``input/sequence.txt``)
+* ``-op`` (``--output-path``) - The path to the location of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
 
-``OutputFile`` - File path of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
+Optional:
 
-``SkipMirror`` - Does not try piece sequences with explored mirrored setups(boolean). (Ex: ``1``)
+* ``-inc`` (``--increased-vision``) - The number of pieces that are taken into account additionally after placing each piece. (This should be set to 0 for BCF purposes.)
+
+* ``-tsp`` (``--tree-succeed-percentage``) - The minimum percentage of trees that must be successful to keep the parent tree node.
+
+* ``-sp`` (``--sequence-path``) - The path to the ``sequence.txt`` file generated in the previous step. (Ex: ``input/sequence.txt``)
+
+* ``-sm`` (``--skip-mirror``) - Whether the mirrored field will be searched or not. (Ex: ``1``)
 
 ``SkipCongruent`` (soon)
 
-## Set percentages in ``Best_Percentages.txt``
+Example command: ``& ./bcf-checker.exe @('-vis', '4', '-inc', '0', '-pp', '4', '-sd', <sfinder-directory>, '-op', 'output/congruent_output_SS-LS.txt')`` (powershell)
 
-Set the best known percentage for the specific queue in csv format. You only need to specify queues up to ``_numSetupPieces + _numEqualPieces``.
+## Set percentages in ``input/Best_Percentages.txt``
+
+Set the best known percentage for the specific queue in CSV format. You only need to specify queues up to ``--visible-pieces``.
 
 Ex:
 ```
@@ -46,17 +56,17 @@ SSLS,0.7595
 SSSL,0.7595
 ```
 
-Save the files and start running the .exe file to begin searching for the bcf.
+Save the files and start running the .exe file to begin searching for the BCF.
 
 ## Extracting setups
 
-### Extracting setups from console output
+### Extracting setups from the console output (Not recommended)
 
 You could pipe the output from the command line to a file like so:
 
-```bcf-picker.exe > 'output.txt'``` (Powershell)
+```& ./bcf-checker.exe ... > 'output.txt'``` (Powershell)
 
-you could use this regex: ``(v115@.+)`` to find the relavent setups from the console output.
+you could use this regex: ``(v115@.+)`` to extract the relevant setups from the console output.
 
 ### Extracting setups from file output
 Collect all pieces from the layers of a tree to get a set of indexes corresponding to the solve percentage provided in the last layer

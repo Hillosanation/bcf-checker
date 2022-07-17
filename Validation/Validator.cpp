@@ -2,6 +2,7 @@
 #include <fstream>
 #include <regex>
 #include <iostream>
+#include <filesystem>
 #include "./Validator.h"
 #include "../Settings/Configuration.h"
 
@@ -20,7 +21,7 @@ vector<string> Validator::RunCommand(string Command, bool LogCommand = true) {
 }
 
 vector<string> Validator::ReturnSfinderOutput(string SFinderCommand) {
-        fs::path SFinderPath = Config.SFinderDir / "sfinder-fixed-180.jar";
+        fs::path SFinderPath = (std::filesystem::path)(Config.GetValueString("--sfinder-directory")) / "sfinder-fixed-180.jar";
         return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
     }
 
