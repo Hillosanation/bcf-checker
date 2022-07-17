@@ -44,7 +44,7 @@ Optional:
 
 ``SkipCongruent`` (soon)
 
-Example command: ``& ./bcf-checker.exe @('-vis', '4', '-inc', '0', '-pp', '4', '-sd', <sfinder-directory>)`` (powershell)
+Example command: ``& ./bcf-checker.exe @('-vis', '4', '-inc', '0', '-pp', '4', '-sd', <sfinder-directory>, '-op', 'output/congruent_output_SS-LS.txt')`` (powershell)
 
 ## Set percentages in ``input/Best_Percentages.txt``
 
