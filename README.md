@@ -30,6 +30,8 @@ Required:
 
 * ``-sd`` (``--sfinder-directory``) - The directory ``sfinder.jar`` is located in.
 
+* ``-op`` (``--output-path``) - The path to the location of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
+
 Optional:
 
 * ``-inc`` (``--increased-vision``) - The number of pieces that are taken into account additionally after placing each piece. (This should be set to 0 for BCF purposes.)
@@ -37,8 +39,6 @@ Optional:
 * ``-tsp`` (``--tree-succeed-percentage``) - The minimum percentage of trees that must be successful to keep the parent tree node.
 
 * ``-sp`` (``--sequence-path``) - The path to the ``sequence.txt`` file generated in the previous step. (Ex: ``input/sequence.txt``)
-
-* ``-op`` (``--output-path``) - The path to the location of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
 
 * ``-sm`` (``--skip-mirror``) - Whether the mirrored field will be searched or not. (Ex: ``1``)
 
