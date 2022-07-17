@@ -5,36 +5,32 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
+#include <any>
 #include "../PercentageRecord.h"
+#include "../dependancies/argparse-2.6/include/argparse/argparse.hpp"
 using std::set;
 using std::map;
 using std::string;
 using std::vector;
 
 class Configuration { //TODO: global singleton?
-	void SetConfig(vector<string> Settings, vector<vector<string>> Percentages);
-
-	PercentageRecord& PercentageRecordObj;
+	argparse::ArgumentParser parser;
 
 public:
-	//OI YA BIG DUMMY, CHANGE THE VALUES IN sequence.txt AIGHT? THESE WILL BE OVERWRITTEN BY THOSE
-	int _numSetupPieces = 4;
-	int _numEqualPieces = 0;
-	int _increasedSeePiecesPerPlacement = 0; // usually set to 1, as you see 1 new piece from the next bag for each piece you place.
-	//remaining pieces are "blind", you have to conform to the constraints
-
-	int _recurseDepth = 4; //the number of pieces placed
-
-	double SolveThresholdPercentage = 0.8282; //the percentage of queues that a node should at least cover
-	double TreeSucceedPercentage = 0.1; //include current tree if it contains at least this percentage of maximum child nodes
-
-	bool SkipMirror = false; //does not check mirror setups, only useful when exact mirrors can be built
-
-	std::filesystem::path SFinderDir = R"(****)";
 	const std::filesystem::path WorkingDir = std::filesystem::current_path();
-	//FullBag = { "T", "I", "O", "J", "L", "S", "Z" }
-	string SequenceFilePath = "sequence.txt";
-	string OutputFile = "congruent_output_SO-TJ.txt";
 
-	Configuration(PercentageRecord& extPercentageRecordObj);
+	Configuration(PercentageRecord& extPercentageRecordObj, int argc, char* argv[]);
+
+	//template<typename T> //im dumb and bad
+	//T GetValue(string key) {
+	//	auto x = parser.get<string>(key);
+	//	return static_cast<T>((string)x);
+	//}
+
+	int GetValueInt(string key);
+	double GetValueDouble(string key);
+	bool GetValueBool(string key);
+	string GetValueString(string key);
+
+
 };

@@ -58,7 +58,7 @@ set<int> MirrorIndexes(set<int> Indexes) {
 }
 
 bool BuildChecker::isBuildable(std::set<int> Indexes, bool NoRepeat = true) {
-    if (Config.SkipMirror and BuildRecord.find(MirrorIndexes(Indexes)) != BuildRecord.end()) {
+    if (Config.GetValueBool("--skip-mirror") and BuildRecord.find(MirrorIndexes(Indexes)) != BuildRecord.end()) {
         return false;
     }
     if (BuildRecord.find(Indexes) != BuildRecord.end()) {

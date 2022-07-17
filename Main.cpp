@@ -9,7 +9,7 @@
 #include <set>
 #include <vector>
 #include <iomanip>
-#include <filesystem>
+//#include <filesystem>
 using std::set;
 using std::vector;
 
@@ -31,15 +31,15 @@ void PrintTree(CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
     }
 }
 
-int main() {
+int main(int argc, char* argv[]) {
     //prep
     std::cout << "Begin prep\n";
     PercentageRecord PercentageRecordObj;
-    Configuration Config(PercentageRecordObj);
+    Configuration Config(PercentageRecordObj, argc, argv);
     std::cout << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     
     set<string> Sequences;
-    std::ifstream SequenceStream(Config.WorkingDir / Config.SequenceFilePath);
+    std::ifstream SequenceStream(Config.WorkingDir / Config.GetValueString("--sequence-path"));
     for (const auto& row : ReadCSV(SequenceStream)) {
         Sequences.insert(row[0]);
     }
@@ -66,9 +66,9 @@ int main() {
     
     //output
 
-    std::cout << "writing: " << Config.OutputFile << "\n";
+    std::cout << "writing: " << Config.GetValueString("--output-path") << "\n";
 
-    std::ofstream OutputStream(Config.WorkingDir / Config.OutputFile);
+    std::ofstream OutputStream(Config.WorkingDir / Config.GetValueString("--output-path"));
     OutputStream << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     for (const auto& tree : AllTrees) {
         PrintTree(tree, 0, OutputStream);

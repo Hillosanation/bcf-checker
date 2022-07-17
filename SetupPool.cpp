@@ -41,7 +41,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
         if (AllUsedPieceIndexes == set<int>()) throw std::runtime_error("There should be at least one used piece.");
     }
 
-    if (Layer == Config._recurseDepth) {
+    if (Layer == Config.GetValueInt("--placed-pieces")) {
         std::cout << "New setup found: " << SetToString(AllUsedPieceIndexes) << "\n";
         set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
         for (const auto & sequence : ValidatorObj.ReturnCoveredQueues(AllUsedPieceIndexes, SetupSequences)) {
@@ -57,7 +57,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
         return { CurrentPieceIndex, CurrentSolvePercent, {{Fumen, {}}} }; //format abuse, only leaves will hve empty vector of trees
     }
 
-    int NumSamePieces = Config._numSetupPieces + Config._numEqualPieces + (Config._increasedSeePiecesPerPlacement - 1) * Layer;
+    int NumSamePieces = Config.GetValueInt("--visible-pieces") + (Config.GetValueInt("--increased-vision") - 1) * Layer;
     //remove the piece used in coversequence
     set<string> newCoverSequences;
     if (Layer >= 1) {
@@ -162,7 +162,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
                 CommonFieldTree result = newPool.ReturnTree(candidatePieceIndex, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
                 if (result.SolvePercent >= 0) {
                     //record to node collection by next bag pieces
-                    auto key = SeqMapEntry.first.substr(std::max(0, Config._numSetupPieces - Layer));
+                    auto key = SeqMapEntry.first.substr(std::max(0, Config.GetValueInt("--visible-pieces") - Layer)); //TODO: should this be _numSetupPieces?
                     bool found = false; //TODO: turn OutputNodes from vector to map?
                     for (auto& node : OutputNodes) {
                         if (node.first == key) {
@@ -178,7 +178,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
             std::cout << "--End of Layer " << Layer << "--\n";
             //if there isn't at least one valid cover for the current set of sequences, it fails to completely cover, so return negative solve percentage
             int failBranches = (LoopCount + 1) - (int)OutputNodes.size();
-            if (failBranches / newSeqMap.size() > (1 - Config.TreeSucceedPercentage)) return { -1, -1, {} };
+            if (failBranches / newSeqMap.size() > (1 - Config.GetValueDouble("--tree-succeed-percentage"))) return {-1, -1, {}};
             LoopCount++;
         }
         //Termination: return all fields that cover the final queue
@@ -187,27 +187,25 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
 }
 
 vector<CommonFieldTree> SetupPoolWithoutCover::Start(set<string>& Sequences) {
-        if (Config._numSetupPieces + Config._numEqualPieces < 2) throw std::invalid_argument("Not enough common pieces to work with.");
-        map<string, set<string>> newSeqMap = CreateNewSeqMap(Sequences, Config._numSetupPieces + Config._numEqualPieces);
-        vector<CommonFieldTree> Output;
+    if (Config.GetValueInt("--visible-pieces") < 2) throw std::invalid_argument("Not enough common pieces to work with.");
+    if (Config.GetValueInt("--placed-pieces") > 4) throw std::invalid_argument("Currently cannot search setups with possible skims.");
 
-        for (const auto& sequenceEntry : newSeqMap) {
-            PercentageRecordObj.UpdatePercentage(sequenceEntry.first, Config.SolveThresholdPercentage);
-        }
+    map<string, set<string>> newSeqMap = CreateNewSeqMap(Sequences, Config.GetValueInt("--visible-pieces"));
+    vector<CommonFieldTree> Output;
 
-        SetupPoolWithoutCover newPool(Layer + 1, {}, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
+    SetupPoolWithoutCover newPool(Layer + 1, {}, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
 
-        for (const auto& sequenceEntry : newSeqMap) {
-            std::cout << std::fixed << std::setprecision(2);
-            std::cout << "Solve threshold base: " << PercentageRecordObj.BestPercentagesString() << "\n";
-            std::cout << "trying: " << sequenceEntry.first << "\n";
+    for (const auto& sequenceEntry : newSeqMap) {
+        std::cout << std::fixed << std::setprecision(2);
+        std::cout << "Solve threshold base: " << PercentageRecordObj.BestPercentagesString() << "\n";
+        std::cout << "trying: " << sequenceEntry.first << "\n";
 
-            //double nextSolvePercent = ValidatorObj.SfinderPercent({}, sequenceEntry.second);
-            //assuming 0p always passes percentage check
-            double nextSolvePercent = 1.00;
-            if (nextSolvePercent < PercentageRecordObj.GetThreshold()) continue;
-            Output.push_back(newPool.ReturnTree({}, sequenceEntry.second, nextSolvePercent, sequenceEntry.first));
-            PercentageRecordObj.AddToIgnoredSequences(sequenceEntry.first);
-        }
-        return Output;
+        //double nextSolvePercent = ValidatorObj.SfinderPercent({}, sequenceEntry.second);
+        //assuming 0p always passes percentage check
+        double nextSolvePercent = 1.00;
+        if (nextSolvePercent < PercentageRecordObj.GetThreshold()) continue;
+        Output.push_back(newPool.ReturnTree({}, sequenceEntry.second, nextSolvePercent, sequenceEntry.first));
+        PercentageRecordObj.AddToIgnoredSequences(sequenceEntry.first);
     }
+    return Output;
+}
