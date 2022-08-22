@@ -473,3 +473,5 @@ const map<char, int> FumenIndex = {
 vector<vector<string>> ReadCSV(std::ifstream& FileStream);
 
 string PercentageMapToString(map<string, double> PercentageMap);
+
+double RoundToDP(double x, int DecimalPlaces);

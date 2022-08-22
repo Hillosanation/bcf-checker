@@ -27,7 +27,7 @@ Configuration::Configuration(PercentageRecord& extPercentageRecordObj, int argc,
 	parser.add_argument("-sp", "--sequence-path")
 		.default_value((string)"input/sequence.txt");
 	parser.add_argument("-op", "--output-path")
-		.default_value((string)"output/congruent_output_SZ-L.txt");
+		.required();
 	parser.add_argument("-sm", "--skip-mirror")
 		.default_value(true)
 		.help("Does not check mirror setups, only useful when exact mirrors can be built");

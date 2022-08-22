@@ -80,4 +80,4 @@ bool BuildChecker::isBuildable(std::set<int> Indexes, bool NoRepeat = true) {
     return isAllPiecesSupported(separatedFields, combinedField);
 }
 
-BuildChecker::BuildChecker(FieldConverter& extpFieldConverter, Configuration& extConfig) : FieldConverterObj(extpFieldConverter), Config(extConfig) {}
+BuildChecker::BuildChecker(FieldConverter& extpFieldConverter, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) : FieldConverterObj(extpFieldConverter), Config(extConfig), PercentageRecordObj(extPercentageRecordObj)  {}

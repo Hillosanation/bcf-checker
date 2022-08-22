@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
-#include <any>
 #include "../PercentageRecord.h"
 #include "../dependancies/argparse-2.6/include/argparse/argparse.hpp"
 using std::set;

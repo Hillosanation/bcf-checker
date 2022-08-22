@@ -1,6 +1,7 @@
 #include "PercentageRecord.h"
 #include <sstream>
 #include <iostream> //debug
+#include "Misc/CommonDataTypes.h"
 
 void PercentageRecord::UpdateMinimum() {
 	RunningMinimum = 1.00;
@@ -53,4 +54,22 @@ string PercentageRecord::BestPercentagesString() {
 		Output += Entry.first + ": " + tmp.str() + "; ";
 	}
 	return "{" + Output.substr(0, Output.length() - 2) + "}";
+}
+
+bool PercentageRecord::KnownAboveThreshold(set<int> BuildPieces) {
+	//remove outdated percentages while we're here
+	double threshold = RoundToDP(GetThreshold(), 4);
+	for (auto entry : BuildPercentages) {
+		if (RoundToDP(entry.second, 4) < threshold) {
+			BuildPercentages.erase(entry);
+		}
+	}
+	auto it = std::find_if(BuildPercentages.begin(), BuildPercentages.end(), [BuildPieces](pair<set<int>, double> entry) {entry.first == BuildPieces; });
+	return it != BuildPercentages.end();
+}
+
+void PercentageRecord::AddNewPercentage(set<int> BuildPieces, double SolvePercentage) {
+	if (RoundToDP(SolvePercentage, 4) >= RoundToDP(GetThreshold(), 4)) { //failsafe
+		BuildPercentages.insert({ BuildPieces, SolvePercentage });
+	}
 }

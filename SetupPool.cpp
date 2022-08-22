@@ -1,10 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "./SetupPool.h"
-
-double SetupPoolWithoutCover::RoundToDP(double x, int DecimalPlaces) {
-    return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
-}
+#include "Misc/CommonDataTypes.h"
 
 map<string, set<string>> SetupPoolWithoutCover::CreateNewSeqMap(const set<string>& Sequences, int SamePieces) {
     map<string, set<string>> NewSeqMap = {};
@@ -91,7 +88,7 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
     for (auto x : possibleNextPieceIndexes) {
         set<int> nextUsedPieceIndexes = AllUsedPieceIndexes;
         nextUsedPieceIndexes.insert(x);
-        if (BuildCheckerObj.isBuildable(nextUsedPieceIndexes, Layer != 0)) {
+        if (BuildCheckerObj.isBuildable(nextUsedPieceIndexes, Layer >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieceIndexes.insert(x);
         }
         else {
@@ -150,15 +147,18 @@ CommonFieldTree SetupPoolWithoutCover::ReturnTree(int CurrentPieceIndex, set<str
                 }
 
                 //std::cout << "trying: " << SetToString(nextUsedPieceIndexes) << "\n";
-                double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieceIndexes, CandidateCoverSequences);
-                //std::cout << nextSolvePercent;
+                
+                //shortcut re-checking percentages already confirmed by sfinder
                 double currentSolveThresholdPercentage = PercentageRecordObj.GetThreshold();
-                //std::cout << RoundToDP(nextSolvePercent, 4)*100 << " " << RoundToDP(currentSolveThresholdPercentage, 4)*100 << "\n";
+                bool AboveThreshold = PercentageRecordObj.KnownAboveThreshold(nextUsedPieceIndexes);
+                
+                double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieceIndexes, CandidateCoverSequences);
                 
                 if (RoundToDP(nextSolvePercent, 4) < RoundToDP(currentSolveThresholdPercentage, 4)) continue;
                 std::cout << std::fixed << std::setprecision(2);
                 std::cout << "progress: " << SetToString(nextUsedPieceIndexes) << ", " << nextSolvePercent * 100 << "\n";
 
+                PercentageRecordObj.AddNewPercentage(nextUsedPieceIndexes, nextSolvePercent);
                 CommonFieldTree result = newPool.ReturnTree(candidatePieceIndex, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
                 if (result.SolvePercent >= 0) {
                     //record to node collection by next bag pieces

@@ -34,3 +34,7 @@ vector<vector<string>> ReadCSV(std::ifstream& FileStream) {
     }
     return CSVOutput;
 }
+
+double RoundToDP(double x, int DecimalPlaces) {
+    return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
+}

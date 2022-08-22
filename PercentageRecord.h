@@ -5,12 +5,14 @@
 using std::string;
 using std::set;
 using std::map;
+using std::pair;
 
 
 class PercentageRecord {
 	map<string, double> BestPercentages;
 	double RunningMinimum = 1.00;
 	set<string> IgnoredSequences;
+	set<pair<set<int>, double>> BuildPercentages;
 
 	void UpdateMinimum();
 
@@ -24,4 +26,8 @@ public:
 	set<string> ReturnSetupSequences();
 
 	string BestPercentagesString();
+
+	bool KnownAboveThreshold(set<int> BuildPieces);
+
+	void AddNewPercentage(set<int> BuildPieces, double SolvePercentage);
 };
