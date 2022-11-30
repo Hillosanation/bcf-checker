@@ -249,27 +249,27 @@ std::string FumenConvert::TrimFumen(std::string Fumen) {
 	return Fumen;
 }
 
-PlayFieldFilled FumenConvert::ConvertFumen(std::string Fumen, int height, int width) {
-	PlayFieldFilled field;
-	Fumen = TrimFumen(Fumen);
-	std::vector<int> IntVecRep = StringToIntVec(Fumen);
-	TBoard BoardRep = IntVecToBoard(IntVecRep);
-	field = BoardToPFF(BoardRep);
-	field = RemoveExtraRows(field);
-	field = 
-	field = GetSection(field, height, width);
-	return field;
-}
-
-void FumenConvert::test_FumenToField() {
-	FumenConvert FuConv;
-	std::string FuRep = "v115@MgA8HeA8AeA8BeB8DeD8AeA8AeA8BeC8AeA8AeB8Be?A8AeB8AeA8AeB8CeA8AeA8BeA8AeA8AeB8AeF8AeG8DeA8A?eA8AeA8AeA8JeAgH";
-	PlayFieldFilled field = FuConv.ConvertFumen(FuRep, 4, 10);
-	for (auto col : field) {
-		for (auto mino : col) {
-			std::cout << mino;
-		}
-		std::cout << "\n";
-	}
-	std::cout << "\n";
-}
+//PlayFieldFilled FumenConvert::ConvertFumen(std::string Fumen, int height, int width) {
+//	PlayFieldFilled field;
+//	Fumen = TrimFumen(Fumen);
+//	std::vector<int> IntVecRep = StringToIntVec(Fumen);
+//	TBoard BoardRep = IntVecToBoard(IntVecRep);
+//	field = BoardToPFF(BoardRep);
+//	field = RemoveExtraRows(field);
+//	field = //uhhhh???
+//	field = GetSection(field, height, width);
+//	return field;
+//}
+//
+//void FumenConvert::test_FumenToField() {
+//	FumenConvert FuConv;
+//	std::string FuRep = "v115@MgA8HeA8AeA8BeB8DeD8AeA8AeA8BeC8AeA8AeB8Be?A8AeB8AeA8AeB8CeA8AeA8BeA8AeA8AeB8AeF8AeG8DeA8A?eA8AeA8AeA8JeAgH";
+//	PlayFieldFilled field = FuConv.ConvertFumen(FuRep, 4, 10);
+//	for (auto col : field) {
+//		for (auto mino : col) {
+//			std::cout << mino;
+//		}
+//		std::cout << "\n";
+//	}
+//	std::cout << "\n";
+//}

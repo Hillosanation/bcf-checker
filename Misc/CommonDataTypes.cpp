@@ -3,14 +3,14 @@
 #include <fstream>
 #include <sstream>
 
-char ReturnTetromino(int Index) {
-    for (auto TetrominoEntry : TetrominoDict) {
-        if (TetrominoEntry.second.find(Index) != TetrominoEntry.second.end()) {
-            return TetrominoEntry.first;
-        }
-    }
-    throw std::invalid_argument("Index not in TetrominoDict.");
-}
+//char ReturnTetromino(int Index) {
+//    for (auto TetrominoEntry : TetrominoDict) {
+//        if (TetrominoEntry.second.find(Index) != TetrominoEntry.second.end()) {
+//            return TetrominoEntry.first;
+//        }
+//    }
+//    throw std::invalid_argument("Index not in TetrominoDict.");
+//}
 
 set<int> Range(int a, int b) {
     set<int> OutputSet;

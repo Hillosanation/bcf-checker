@@ -4,22 +4,11 @@
 using std::vector;
 using std::string;
 #include "../Misc/CommonDataTypes.h"
+#include "../Field.h"
 #include <stdexcept>
 
-class FumenConvert { //uses tetris-fumen parser by knewjade thrpugh v8
-private: //debug
-	//FumenConvert(int argc, char* argv[]) {
-	//	// Initialize V8.
-	//	v8::V8::Initialize();
-	//}
-
-	//PlayFieldFilled FumenToField(std::string Fumen) {
-	//	v8::Isolate::CreateParams create_params;
-	//	create_params.array_buffer_allocator =
-	//		v8::ArrayBuffer::Allocator::NewDefaultAllocator();
-	//	v8::Isolate* isolate = v8::Isolate::New(create_params);
-	//	v8::Local<v8::String> v8String = v8::String::NewFromUtf8(isolate, "dd", v8::NewStringType::kNormal).ToLocalChecked();
-	//}
+class FumenConvert { //implementing fumen conversion natively
+private: 
 
 	struct TBoardInfo {
 		int BlockNum;
@@ -48,7 +37,6 @@ private: //debug
 	};
 	typedef vector<TBoardInfo> TBoard;
 	typedef vector<bool> TPFFilledLine;
-	typedef vector<Piece> TPFLine;
 	const int FieldWidth = 10;
 	const std::string FumenString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; //weird that this isn't just ascii tbh
 
@@ -78,12 +66,12 @@ private: //debug
 
 	PlayFieldFilled GetSection(PlayFieldFilled PFFilled, int height, int width);
 
-	void test_FumenToField();
+	//void test_FumenToField();
 
 public:
 	std::string ConvertPFF(PlayFieldFilled PFFilled);
 	std::string ConvertPFLine(TPFLine PFLine);
 
-	PlayFieldFilled ConvertFumen(std::string Fumen, int height, int width);
+	//PlayFieldFilled ConvertFumen(std::string Fumen, int height, int width);
 
 };
