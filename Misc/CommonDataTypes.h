@@ -3,7 +3,7 @@
 #include <string>
 #include <set>
 #include <map>
-#include <iosfwd>
+//#include <iosfwd>
 using std::string;
 using std::vector;
 using std::map;
@@ -12,7 +12,7 @@ using std::set;
 //typedef int Piece; //Piece now more robust
 //typedef std::vector<int> PresentPieces;
 typedef std::vector<int> PlayField;
-typedef std::vector<std::vector<bool>> PlayFieldFilled; //standard is col(row(mino)) //TODO: depreciating...
+//typedef std::vector<std::vector<bool>> PlayFieldFilled; //standard is col(row(mino)) //TODO: depreciating...
 
 //struct FuSol { //fumen + solutions (pieces in order)
 //	string Fumen = "";
@@ -37,26 +37,26 @@ typedef std::vector<std::vector<bool>> PlayFieldFilled; //standard is col(row(mi
 //	vector<string> Solves = {};
 //};
 
-struct CommonFieldTree {
-	int UsedPieceIndex;
-	double SolvePercent;
-	vector<std::pair<string, vector<CommonFieldTree>>> childNodes; //unordered_set<CommonFieldTree> possible?
-};
+//struct CommonFieldTree {
+//	Piece UsedPiece;
+//	double SolvePercent;
+//	vector<std::pair<string, vector<CommonFieldTree>>> childNodes; //unordered_set<CommonFieldTree> possible?
+//};
 
 //char ReturnTetromino(int Index);
 
-//set<int> Range(int a, int b);
+set<int> Range(int a, int b);
 
-//const map<char, set<int>> TetrominoDict = {
-//    { 'I', Range(0,37 + 1) },
-//    { 'L', Range(38, 121 + 1) },
-//    { 'J', Range(122,205 + 1) },
-//    { 'O', Range(206,232 + 1) },
-//    { 'S', Range(233,274 + 1) },
-//    { 'T', Range(275,358 + 1) },
-//    { 'Z', Range(359,400 + 1) },
-//};
-//
+const map<char, set<int>> TetrominoDict = {
+    { 'I', Range(0,37 + 1) },
+    { 'L', Range(38, 121 + 1) },
+    { 'J', Range(122,205 + 1) },
+    { 'O', Range(206,232 + 1) },
+    { 'S', Range(233,274 + 1) },
+    { 'T', Range(275,358 + 1) },
+    { 'Z', Range(359,400 + 1) },
+};
+
 //const map<int, int> MirrorMap = {
 //    {  0,  6},
 //    {  1,  5},
@@ -475,4 +475,4 @@ vector<vector<string>> ReadCSV(std::ifstream& FileStream);
 
 //string PercentageMapToString(map<string, double> PercentageMap);
 
-double RoundToDP(double x, int DecimalPlaces);
+//double RoundToDP(double x, int DecimalPlaces);

@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "./Field.h"
 using std::string;
 using std::set;
 using std::map;
@@ -20,12 +21,14 @@ class PercentageRecord {
 	double RunningMinimum = 1.00;
 	set<string> IgnoredSequences;
 	struct SetupResult {
-		set<int> SetupPieces;
+		Field SetupField;
 		double SolvePercentage;
 	};
 	set<SetupResult> SetupRecord;
 
 	void UpdateMinimum();
+
+	double RoundToDP(double x, int DecimalPlaces);
 
 public:
 	double GetThreshold();
@@ -38,7 +41,7 @@ public:
 
 	string BestPercentagesString();
 
-	bool KnownAboveThreshold(set<int> BuildPieces);
+	bool SetupAboveThreshold(Field SetupField);
 
-	void AddNewPercentage(set<int> BuildPieces, double SolvePercentage);
+	void AddNewPercentage(Field SetupField, double SolvePercentage);
 };

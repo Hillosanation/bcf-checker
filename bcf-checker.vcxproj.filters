@@ -45,6 +45,12 @@
     <ClCompile Include="PercentageRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Conversion\FumenConvert.h">
@@ -72,6 +78,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PercentageRecord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

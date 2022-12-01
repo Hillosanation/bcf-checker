@@ -1,10 +1,12 @@
 #pragma once
 #include <map>
+#include <set>
 #include <stdexcept>
 using std::map;
+using std::set;
 
 class Piece {
-	set<int> Range(int a, int b) {
+	set<int> Range(int a, int b) const {
 		set<int> OutputSet;
 		for (size_t i = a; i < b; i++) {
 			OutputSet.insert((int)i);
@@ -436,7 +438,7 @@ class Piece {
         {400,266},
     };
 
-	const int Index;
+	int Index;
 
 public:
 	Piece(int extIndex) : Index(extIndex) {};
@@ -461,5 +463,9 @@ public:
 	int AsFumenIndex() const {
 		return FumenIndex.at(AsTetromino());
 	}
+
+    bool operator==(Piece& rhs) const {
+        return this->Index == rhs.AsIndex();
+    }
 };
 

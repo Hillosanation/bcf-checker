@@ -53,13 +53,13 @@ bool BuildChecker::isBuildable(Field field, bool NoRepeat = true) {
     }
 
     vector<int> combinedPlayField = field.AsPlayField(false);
-    auto NonEmptyMino = [](int MinoType) {MinoType != 0; };
-    if (std::count(combinedPlayField.begin(), combinedPlayField.end(), 1) != 4 * field.AsIndexes().size()) { //all pieces do not intersect
+    auto NonEmptyMino = [](int MinoType) {return MinoType != 0; };
+    if (std::count(combinedPlayField.begin(), combinedPlayField.end(), 1) != 4 * field.AsPieces().size()) { //all pieces do not intersect
         return false;
     }
 
     vector<vector<int>> piecePlayFields;
-    for (const auto& piece : field.AsIndexes()) {        
+    for (const auto& piece : field.AsPieces()) {
         piecePlayFields.push_back(Field({ piece }).AsPlayField(false));
     }
     return AllPiecesSupported(piecePlayFields, combinedPlayField);

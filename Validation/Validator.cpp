@@ -6,7 +6,7 @@
 #include "./Validator.h"
 #include "../Settings/Configuration.h"
 
-vector<string> Validator::RunCommand(string Command, bool LogCommand = true) {
+vector<string> Validator::RunCommand(const string& Command, const bool& LogCommand = true) {
     string WrappedCommand = "\"" + Command + "\"";
     //std::cout << WrappedCommand << "\n";
     std::ifstream OutputStream(_popen(WrappedCommand.c_str(), "r"));
@@ -20,15 +20,15 @@ vector<string> Validator::RunCommand(string Command, bool LogCommand = true) {
     return Output;
 }
 
-vector<string> Validator::ReturnSfinderOutput(string SFinderCommand) {
+vector<string> Validator::ReturnSfinderOutput(const string& SFinderCommand) {
         fs::path SFinderPath = (std::filesystem::path)(Config.GetValueString("--sfinder-directory")) / "sfinder-fixed-180.jar";
         return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
     }
 
-string Validator::IndexesToFumen(std::set<int> Indexes, bool Colored = false) { 
-    FieldConverter::FieldVec Field = FieldConverterObj.IndexesToField(Indexes, Colored);
-    return FumenConvertObj.ConvertPFLine(Field);
-}
+//string Validator::IndexesToFumen(std::set<int> Indexes, bool Colored = false) { 
+//    FieldConverter::FieldVec Field = FieldConverterObj.IndexesToField(Indexes, Colored);
+//    return FumenConvertObj.ConvertPFLine(Field);
+//}
 
 vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vector<string> GluedFumens) {
         fs::path FieldPath = Config.WorkingDir / "temp/field_temp.txt";
@@ -50,33 +50,30 @@ vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vecto
         return ReadCSV(CSVFileStream);
     }
 
-string Validator::OverwriteFumen(string Original, string Overwrite) { //TODO
-    throw std::runtime_error("Function not yet impletemented.");
-    //FumenConvertObj.ConvertFumen(Original);
-    //FumenConvertObj.ConvertFumen(Overwrite);
-    //return RunCommand(f"node field-overwriter.js {Original} {Overwrite}"); //rewrite this in native c++
-    return "";
-}
+//string Validator::OverwriteFumen(string Original, string Overwrite) { //TODO
+//    throw std::runtime_error("Function not yet impletemented.");
+//    //FumenConvertObj.ConvertFumen(Original);
+//    //FumenConvertObj.ConvertFumen(Overwrite);
+//    //return RunCommand(f"node field-overwriter.js {Original} {Overwrite}"); //rewrite this in native c++
+//    return "";
+//}
 
-vector<string> Validator::GlueFumens(vector<string> UngluedFumens) {
+vector<string> Validator::GlueFumen(const string& UngluedFumen) {
     fs::path FumenPath = Config.WorkingDir / "temp/unglued_fumen_temp.txt";
     std::ofstream FumenStream(FumenPath);
-    for (const auto& UngluedFumen : UngluedFumens) {
-        FumenStream << UngluedFumen << "\n";
-    }
+    FumenStream << UngluedFumen << "\n";
     FumenStream.close();
     return RunCommand("node ./dependancies/glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
 }
 
-float Validator::SfinderPercent(std::set<int> UsedPieceIndexes, std::set<string> CoverSequences) {
-    string Fumen = IndexesToFumen(UsedPieceIndexes, false);
+float Validator::SfinderPercent(const Field& field, const set<string>& CoverSequences) {
     fs::path PatternPath = Config.WorkingDir / R"(temp/pattern_temp.txt)";
     std::ofstream PatternStream(PatternPath);
     for (const auto& coverSequence : CoverSequences) {
         PatternStream << coverSequence << "\n";
     }
     PatternStream.close();
-    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + Fumen + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -th -1 -td 0 -fc 0 -d 180");
+    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + field.AsFumen() + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -th -1 -td 0 -fc 0 -d 180");
 
     std::regex Regex(R"(success = ([\d.]+)%)");
     string Result;
@@ -87,20 +84,19 @@ float Validator::SfinderPercent(std::set<int> UsedPieceIndexes, std::set<string>
         }
     }
     if (Result != "") {
-        return std::stof(Result) / 100;
+        return round(std::stof(Result)*100) / 10000;
     }
     else {
         throw std::runtime_error("Success percentage is not found");
     }
 }
 
-string Validator::SwapHoldHead(string Sequence) {
+string Validator::SwapHoldHead(const string& Sequence) {
     return Sequence.substr(1, 1) + Sequence.substr(0, 1) + Sequence.substr(2);
 }
 
-set<string> Validator::ReturnCoveredQueues(set<int> PieceIndexes, set<string> CoverSequences) {
+set<string> Validator::ReturnCoveredQueues(const Field& field, const set<string>& CoverSequences) {
     set<string> OutputSequences;
-    string SetupFumen = IndexesToFumen(PieceIndexes, true);
 
     set<string> ExpandedCoverSequences;
     for (auto const& sequence : CoverSequences) {
@@ -108,7 +104,7 @@ set<string> Validator::ReturnCoveredQueues(set<int> PieceIndexes, set<string> Co
         ExpandedCoverSequences.insert(SwapHoldHead(sequence));
     }
 
-    vector<vector<string>> CoverData = SfinderCover(ExpandedCoverSequences, GlueFumens({SetupFumen}));
+    vector<vector<string>> CoverData = SfinderCover(ExpandedCoverSequences, GlueFumen(field.AsFumen(true)));
     CoverData.erase(CoverData.begin());
 
     set<string> AcceptedSequences;

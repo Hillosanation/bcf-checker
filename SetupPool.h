@@ -15,12 +15,19 @@ using std::map;
 using std::string;
 using std::vector;
 
-class SetupPoolWithoutCover {
-    // does not narrow down search with the piece indexes seen in the cover, but rather calls sfinder directly.
-    // as a result, FieldIndex and CoverDict are absent
+class SetupPool {
+public:
+    struct CommonFieldTree {
+        Piece UsedPiece;
+        double SolvePercent;
+        vector<std::pair<string, vector<CommonFieldTree>>> childNodes; //unordered_set<CommonFieldTree> possible?
+
+        CommonFieldTree& operator= (const CommonFieldTree&) = delete;
+    };
+
 private:
     int Layer;
-    set<int> UsedPieceIndexes;
+    Field UsedPieces;
     BuildChecker& BuildCheckerObj; //const?
     Validator& ValidatorObj; //const?
     PercentageRecord& PercentageRecordObj;
@@ -30,15 +37,15 @@ private:
 
     void AddToSeqMap(map<string, set<string>>& Map, string Key, string Entry);
 
-    string SetToString(set<int> s);
+    string PiecesToString(unordered_set<Piece> Pieces);
 
-    CommonFieldTree ReturnTree(int CurrentPieceIndex, set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
-
-    double RoundToDP(double x, int DecimalPlaces);
+    CommonFieldTree ReturnTree(Piece CurrentPiece, set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
 
 public:
-    SetupPoolWithoutCover(int layer, set<int> usedPieceIndexes, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
-        Layer(layer), UsedPieceIndexes(usedPieceIndexes), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
+    CommonFieldTree ReturnStartingTree(set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
+
+    SetupPool(int layer, Field prevUsedPieces, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
+        Layer(layer), UsedPieces(prevUsedPieces), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
 
     vector<CommonFieldTree> Start(set<string>& Sequences);
 };

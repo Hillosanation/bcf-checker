@@ -14,15 +14,15 @@ using std::set;
 using std::vector;
 
 
-void PrintTree(CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
+void PrintTree(SetupPool::CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
     const char tab = '\t';
     OutputStream << std::fixed << std::setprecision(2);
     if (Tree.childNodes[0].second.size() == 0) {
-        OutputStream << string(Indent, tab) << Tree.UsedPieceIndex << tab << Tree.SolvePercent * 100 << "%: " << Tree.childNodes[0].first << "\n";
+        OutputStream << string(Indent, tab) << Tree.UsedPiece.AsIndex()  << tab << Tree.SolvePercent * 100 << "%: " << Tree.childNodes[0].first << "\n";
         return;
     }
     else {
-        OutputStream << string(Indent, tab) << Tree.UsedPieceIndex << tab << Tree.SolvePercent * 100 << "%\n";
+        OutputStream << string(Indent, tab) << Tree.UsedPiece.AsIndex() << tab << Tree.SolvePercent * 100 << "%\n";
         for (const auto& Entry : Tree.childNodes) {
             for (const auto& node : Entry.second) { //ignore .first (unneeded)
                 PrintTree(node, Indent + 1, OutputStream);
@@ -47,13 +47,12 @@ int main(int argc, char* argv[]) {
     //compute
 
     std::cout << "Begin searching for congruents\n";
-    FieldConverter FieldConverterObj;
-    BuildChecker BuildCheckerObj(FieldConverterObj, Config);
-    Validator ValidatorObj(FieldConverterObj, Config);
+    BuildChecker BuildCheckerObj(Config);
+    Validator ValidatorObj(Config);
 
-    vector<CommonFieldTree> QueueTrees = SetupPoolWithoutCover(-1, set<int>(), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
+    vector<SetupPool::CommonFieldTree> QueueTrees = SetupPool(-1, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
 
-    vector<CommonFieldTree> AllTrees;
+    vector<SetupPool::CommonFieldTree> AllTrees;
     for (const auto& tree : QueueTrees) {
         const auto& SolveTrees = tree.childNodes[0].second;
         AllTrees.insert(AllTrees.end(), SolveTrees.begin(), SolveTrees.end());
