@@ -2,8 +2,6 @@
 #include "./Misc/CommonDataTypes.h"
 #include "./PercentageRecord.h"
 #include "./SetupPool.h"
-#include "./TreeMerger.h"
-#include "./Conversion/FieldConverter.h"
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -14,15 +12,15 @@ using std::set;
 using std::vector;
 
 
-void PrintTree(CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
+void PrintTree(SetupPool::CommonFieldTree Tree, int Indent, std::ofstream& OutputStream) {
     const char tab = '\t';
     OutputStream << std::fixed << std::setprecision(2);
     if (Tree.childNodes[0].second.size() == 0) {
-        OutputStream << string(Indent, tab) << Tree.UsedPieceIndex << tab << Tree.SolvePercent * 100 << "%: " << Tree.childNodes[0].first << "\n";
+        OutputStream << string(Indent, tab) << Tree.UsedPiece.AsIndex()  << tab << Tree.SolvePercent * 100 << "%: " << Tree.childNodes[0].first << "\n";
         return;
     }
     else {
-        OutputStream << string(Indent, tab) << Tree.UsedPieceIndex << tab << Tree.SolvePercent * 100 << "%\n";
+        OutputStream << string(Indent, tab) << Tree.UsedPiece.AsIndex() << tab << Tree.SolvePercent * 100 << "%\n";
         for (const auto& Entry : Tree.childNodes) {
             for (const auto& node : Entry.second) { //ignore .first (unneeded)
                 PrintTree(node, Indent + 1, OutputStream);
@@ -39,7 +37,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     
     set<string> Sequences;
-    std::ifstream SequenceStream(Config.WorkingDir / Config.GetValueString("--sequence-path"));
+    std::ifstream SequenceStream(Config.WorkingDir / Config.GetValue<string>("--sequence-path"));
     for (const auto& row : ReadCSV(SequenceStream)) {
         Sequences.insert(row[0]);
     }
@@ -47,13 +45,12 @@ int main(int argc, char* argv[]) {
     //compute
 
     std::cout << "Begin searching for congruents\n";
-    FieldConverter FieldConverterObj;
-    BuildChecker BuildCheckerObj(FieldConverterObj, Config);
-    Validator ValidatorObj(FieldConverterObj, Config);
+    BuildChecker BuildCheckerObj(Config);
+    Validator ValidatorObj(Config);
 
-    vector<CommonFieldTree> QueueTrees = SetupPoolWithoutCover(-1, set<int>(), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
+    vector<SetupPool::CommonFieldTree> QueueTrees = SetupPool(-1, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
 
-    vector<CommonFieldTree> AllTrees;
+    vector<SetupPool::CommonFieldTree> AllTrees;
     for (const auto& tree : QueueTrees) {
         const auto& SolveTrees = tree.childNodes[0].second;
         AllTrees.insert(AllTrees.end(), SolveTrees.begin(), SolveTrees.end());
@@ -66,9 +63,9 @@ int main(int argc, char* argv[]) {
     
     //output
 
-    std::cout << "writing: " << Config.GetValueString("--output-path") << "\n";
+    std::cout << "writing: " << Config.GetValue<string>("--output-path") << "\n";
 
-    std::ofstream OutputStream(Config.WorkingDir / Config.GetValueString("--output-path"));
+    std::ofstream OutputStream(Config.WorkingDir / Config.GetValue<string>("--output-path"));
     OutputStream << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     for (const auto& tree : AllTrees) {
         PrintTree(tree, 0, OutputStream);

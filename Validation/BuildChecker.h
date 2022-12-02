@@ -1,32 +1,27 @@
 #pragma once
 #include <vector>
 #include <set>
-#include "../Conversion/FieldConverter.h"
 #include "../Settings/Configuration.h"
 #include "../PercentageRecord.h"
+#include "../Field.h"
+#include "../Misc/CommonDataTypes.h"
 
 class BuildChecker {
 private:
-    FieldConverter& FieldConverterObj;
     Configuration& Config;
 
-    PercentageRecord& PercentageRecordObj;
-    std::set<std::set<int>> BuildRecord;
+    std::set<Field> BuildRecord;
 
-    typedef vector<bool> BoolLine;
+    bool PieceSupported(PlayField PieceField, PlayField CombinedField);
 
-    bool isPieceSupported(BoolLine PieceField, BoolLine CombinedField);
+    PlayField RemoveFromField(PlayField OriginalField, PlayField RemoveField);
 
-    BoolLine RemoveFromField(BoolLine OriginalField, BoolLine RemoveField);
-
-    BoolLine IntVecToBoolVec(vector<int> IntVec);
-
-    bool isAllPiecesSupported(vector<BoolLine> SeparatedFields, BoolLine CombinedField);
+    bool AllPiecesSupported(vector<PlayField> SeparatedFields, PlayField CombinedField);
 
 public:
-    BuildChecker(FieldConverter& extpFieldConverter, Configuration& extConfig, PercentageRecord& extPercentageRecordObj);
+    BuildChecker(Configuration& extConfig);
 
-    bool isBuildable(std::set<int> Indexes, bool NoRepeat);
+    bool isBuildable(Field field, bool NoRepeat);
 
 };
 

@@ -1,83 +1,68 @@
 #include "BuildChecker.h"
-#include "../Misc/CommonDataTypes.h"
 #include <stdexcept>
 
 using std::vector;
 
-bool BuildChecker::isPieceSupported(BuildChecker::BoolLine PieceField, BuildChecker::BoolLine CombinedField) {
-    if (PieceField.size() != CombinedField.size()) throw "Size of fields are not equal.";
-    for (size_t i = 0; i < PieceField.size(); i++) {
-        if ((PieceField[i] == true) && (CombinedField[i] == true)) return true;
+bool BuildChecker::PieceSupported(PlayField PiecePlayField, PlayField CombinedPlayField) {
+    //if (PiecePlayField.size() != CombinedPlayField.size()) throw "Size of fields are not equal."; //not needed
+
+    PlayField upperField = PiecePlayField;
+    upperField.insert(upperField.end(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+    PlayField lowerField = PiecePlayField;
+    lowerField.insert(lowerField.begin(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+
+    //all possible filled mino positions that can support the current piece
+    PlayField DependancyField = RemoveFromField(lowerField, upperField);
+
+    for (size_t i = 0; i < DependancyField.size(); i++) {
+        if ((DependancyField[i] != 0) && (CombinedPlayField[i] != 0)) return true;
     }
     return false;
 }
 
-BuildChecker::BoolLine BuildChecker::RemoveFromField(BuildChecker::BoolLine OriginalField, BuildChecker::BoolLine RemoveField) {
-    if (OriginalField.size() != RemoveField.size()) throw "Size of fields are not equal.";
-    BuildChecker::BoolLine newField = OriginalField;
-    for (size_t i = 0; i < OriginalField.size(); i++) {
-        if (RemoveField[i] == true) {
-            newField[i] = false;
+PlayField BuildChecker::RemoveFromField(PlayField StartingPlayField, PlayField RemovePlayField) {
+    if (StartingPlayField.size() != RemovePlayField.size()) throw "Size of fields are not equal.";
+    vector<int> newField = StartingPlayField;
+    for (size_t i = 0; i < StartingPlayField.size(); i++) {
+        if (RemovePlayField[i] != 0) {
+            newField[i] = 0;
         }
     }
     return newField;
 }
 
-bool BuildChecker::isAllPiecesSupported(vector<BuildChecker::BoolLine> SeparatedFields, BuildChecker::BoolLine CombinedField) {
-    CombinedField.insert(CombinedField.end(), { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
+bool BuildChecker::AllPiecesSupported(vector<PlayField> PiecePlayFields, PlayField CombinedPlayField) {
+    //the new column represents the floor
+    CombinedPlayField.insert(CombinedPlayField.end(), { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
 
-    vector<BoolLine> DependancyFields(SeparatedFields.size());
-    for (size_t i = 0; i < SeparatedFields.size(); i++) {
-        BoolLine left = SeparatedFields[i];
-        left.insert(left.end(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        BoolLine right = SeparatedFields[i];
-        right.insert(right.begin(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        DependancyFields[i] = RemoveFromField(right, left);
-    }
-
-    for (size_t i = 0; i < DependancyFields.size(); i++) {
-        if (!isPieceSupported(DependancyFields[i], CombinedField)) return false;
+    for (const auto& PiecePlayField : PiecePlayFields) {
+        if (!PieceSupported(PiecePlayField, CombinedPlayField)) return false;
     }
     return true;
 }
 
-BuildChecker::BoolLine BuildChecker::IntVecToBoolVec(vector<int> IntVec) {
-    BoolLine Output;
-    for (auto Int : IntVec) {
-        Output.push_back(Int); //implicitly covert int -> bool
-    }
-    return Output;
-}
-
-set<int> MirrorIndexes(set<int> Indexes) {
-    set<int> Output;
-    for (const auto& index : Indexes) {
-        Output.insert(MirrorMap.at(index));
-    }
-    return Output;
-}
-
-bool BuildChecker::isBuildable(std::set<int> Indexes, bool NoRepeat = true) {
-    if (Config.GetValueBool("--skip-mirror") and BuildRecord.find(MirrorIndexes(Indexes)) != BuildRecord.end()) {
+bool BuildChecker::isBuildable(Field field, bool NoRepeat = true) {
+    if (Config.GetValue<bool>("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) {
         return false;
     }
-    if (BuildRecord.find(Indexes) != BuildRecord.end()) {
+    if (BuildRecord.find(field) != BuildRecord.end()) {
         return false;
     }
     else {
-        if (NoRepeat) BuildRecord.insert(Indexes);
+        if (NoRepeat) BuildRecord.insert(field);
     }
 
-    BoolLine combinedField = IntVecToBoolVec(FieldConverterObj.IndexesToField(Indexes, false));
-    if (count(combinedField.begin(), combinedField.end(), 1) != 4 * Indexes.size()) { //all pieces do not intersect
+    vector<int> combinedPlayField = field.AsPlayField(false);
+    auto NonEmptyMino = [](int MinoType) { return MinoType != 0; };
+    if (std::count_if(combinedPlayField.begin(), combinedPlayField.end(), NonEmptyMino) != 4 * field.AsPieces().size()) { //all pieces do not intersect
         return false;
     }
 
-    vector<BoolLine> separatedFields;
-    for (auto index : Indexes) {
-        separatedFields.push_back(IntVecToBoolVec(FieldConverterObj.IndexesToField({ index }, false)));
+    vector<vector<int>> piecePlayFields;
+    for (const auto& piece : field.AsPieces()) {
+        piecePlayFields.push_back(Field({ piece }).AsPlayField(false));
     }
-    return isAllPiecesSupported(separatedFields, combinedField);
+    return AllPiecesSupported(piecePlayFields, combinedPlayField);
 }
 
-BuildChecker::BuildChecker(FieldConverter& extpFieldConverter, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) : FieldConverterObj(extpFieldConverter), Config(extConfig), PercentageRecordObj(extPercentageRecordObj)  {}
+BuildChecker::BuildChecker(Configuration& extConfig) : Config(extConfig) {}

@@ -6,39 +6,30 @@ using std::string;
 using std::vector;
 using std::set;
 #include <filesystem>
-#include "../Conversion/FieldConverter.h"
-#include "../Conversion/FumenConvert.h"
 #include "../Misc/CommonDataTypes.h"
 #include "../Settings/Configuration.h"
+#include "../Field.h"
 
 namespace fs = std::filesystem;
 
 class Validator {
 
-    FieldConverter& FieldConverterObj;
-
-    FumenConvert FumenConvertObj;
-
     Configuration& Config;
 
-    vector<string> RunCommand(string Command, bool LogCommand);
+    vector<string> RunCommand(const string& Command, const bool& LogCommand);
 
-    vector<string> ReturnSfinderOutput(string SFinderCommand);
+    vector<string> ReturnSfinderOutput(const string& SFinderCommand);
 
     vector<vector<string>> SfinderCover(set<string> CoverSequences, vector<string> GluedFumens);
 
-    string OverwriteFumen(string Original, string Overwrite);
+    vector<string> GlueFumen(const string& UngluedFumen);
 
-    vector<string> GlueFumens(vector<string> UngluedFumens);
-
-    string SwapHoldHead(string Sequence);
+    string SwapHoldHead(const string& Sequence);
 
 public:
-    Validator(FieldConverter& extFieldConverterObj, Configuration& extConfig) : FieldConverterObj(extFieldConverterObj), Config(extConfig) {};
-    
-    string IndexesToFumen(set<int> Indexes, bool Colored);
+    Validator(Configuration& extConfig) : Config(extConfig) {};
 
-    float SfinderPercent(set<int> UsedPieceIndexes, set<string> CoverSequences);
+    float SfinderPercent(const Field& field, const set<string>& CoverSequences);
 
-    set<string> ReturnCoveredQueues(set<int> PieceIndexes, set<string> CoverSequences);
+    set<string> ReturnCoveredQueues(const Field& field, const set<string>& CoverSequences);
 };

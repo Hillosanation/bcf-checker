@@ -2,19 +2,37 @@
 #include <map>
 #include <set>
 #include <string>
+#include <vector>
+#include "./Field.h"
 using std::string;
 using std::set;
 using std::map;
-using std::pair;
+using std::vector;
 
 
 class PercentageRecord {
-	map<string, double> BestPercentages;
+	struct SequenceResult {
+		string Sequence; //The fragment of sequence used to determine which 10/11p sequences to group together.
+		double BestPercent;
+	};
+	vector<SequenceResult> SequenceRecord;
+	//map<string, double> SequenceRecord;
 	double RunningMinimum = 1.00;
 	set<string> IgnoredSequences;
-	set<pair<set<int>, double>> BuildPercentages;
+
+	struct SetupResult {
+		Field SetupField;
+		double SolvePercentage;
+
+		bool operator<(const SetupResult& rhs) const {
+			return (this->SetupField < rhs.SetupField) or (this->SolvePercentage < rhs.SolvePercentage);
+		}
+	};
+	set<SetupResult> SetupRecord;
 
 	void UpdateMinimum();
+
+	double RoundToDP(double x, int DecimalPlaces);
 
 public:
 	double GetThreshold();
@@ -27,7 +45,7 @@ public:
 
 	string BestPercentagesString();
 
-	bool KnownAboveThreshold(set<int> BuildPieces);
+	bool SetupAboveThreshold(Field SetupField);
 
-	void AddNewPercentage(set<int> BuildPieces, double SolvePercentage);
+	void AddNewPercentage(Field SetupField, double SolvePercentage);
 };
