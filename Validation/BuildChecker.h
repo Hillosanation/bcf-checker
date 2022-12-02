@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include <set>
-#include "../Conversion/FieldConverter.h"
 #include "../Settings/Configuration.h"
 #include "../PercentageRecord.h"
 #include "../Field.h"

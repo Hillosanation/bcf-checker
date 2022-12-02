@@ -25,11 +25,6 @@ vector<string> Validator::ReturnSfinderOutput(const string& SFinderCommand) {
         return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
     }
 
-//string Validator::IndexesToFumen(std::set<int> Indexes, bool Colored = false) { 
-//    FieldConverter::FieldVec Field = FieldConverterObj.IndexesToField(Indexes, Colored);
-//    return FumenConvertObj.ConvertPFLine(Field);
-//}
-
 vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vector<string> GluedFumens) {
         fs::path FieldPath = Config.WorkingDir / "temp/field_temp.txt";
         std::ofstream FieldStream(FieldPath);
@@ -49,14 +44,6 @@ vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vecto
         std::ifstream CSVFileStream(CSVFilePath);
         return ReadCSV(CSVFileStream);
     }
-
-//string Validator::OverwriteFumen(string Original, string Overwrite) { //TODO
-//    throw std::runtime_error("Function not yet impletemented.");
-//    //FumenConvertObj.ConvertFumen(Original);
-//    //FumenConvertObj.ConvertFumen(Overwrite);
-//    //return RunCommand(f"node field-overwriter.js {Original} {Overwrite}"); //rewrite this in native c++
-//    return "";
-//}
 
 vector<string> Validator::GlueFumen(const string& UngluedFumen) {
     fs::path FumenPath = Config.WorkingDir / "temp/unglued_fumen_temp.txt";

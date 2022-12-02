@@ -25,28 +25,14 @@ private:
 			this->Consecutive += rhs.Consecutive + 1;
 			return *this;
 		}
-
-		//bool operator==(const TBoardInfo& other) {
-		//	if ((this->FumenIndex == other.FumenIndex) && (this->Consecutive == other.Consecutive)) {
-		//		return true;
-		//	}
-		//	else {
-		//		return false;
-		//	}
-		//}
 	};
 	typedef vector<TBoardInfo> TBoard;
-	//typedef vector<bool> TPFFilledLine; //TODO: i don't actually need this type
 	const int FieldWidth = 10;
 	const std::string FumenString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; //weird that this isn't just ascii tbh
 
-	//TBoard MakePartialBoardRepresentation(const TPFFilledLine& PFFLine);
 	TBoard MakePartialBoardRepresentation(const PlayField& PFFLine);
 
-	//TBoard MakeBoardRepresentation(const PlayFieldFilled& PFFilled);
 	TBoard MakeBoardRepresentation(const PlayField& PFLine);
-
-	//PlayFieldFilled ExpandToFullWidth(PlayFieldFilled PFFilled);
 
 	std::vector<int> ConvertTo64(TBoard Board);
 
@@ -69,7 +55,6 @@ private:
 	//void test_FumenToField();
 
 public:
-	//std::string ConvertPFF(PlayFieldFilled PFFilled);
 	std::string ConvertPlayField(PlayField PlayField);
 
 	//PlayFieldFilled ConvertFumen(std::string Fumen, int height, int width);

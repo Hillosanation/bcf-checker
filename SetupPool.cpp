@@ -22,9 +22,9 @@ void SetupPool::AddToSeqMap(map<string, set<string>>& Map, string Key, string En
     }
 }
 
-string SetupPool::PiecesToString(unordered_set<Piece> Pieces) {
+string SetupPool::FieldToString(Field field) { //non-functional
     string Content = "";
-    for (const auto& piece : Pieces) {
+    for (const auto& piece : field.AsPieces()) {
         string newString = std::to_string(piece.AsIndex()) + ", ";
         Content.insert(Content.end(), newString.begin(), newString.end());
     }
@@ -33,13 +33,14 @@ string SetupPool::PiecesToString(unordered_set<Piece> Pieces) {
 
 SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence) { //TODO: setup SetupPieceSequence should really be initialized from the SetupPool constructor, but then I would need to use multiple SetupPools at Start() to assign the correct setup sequence to each pool.
     /*set<int> AllUsedPieceIndexes;*/
-    unordered_set<Piece> AllUsedPieces = UsedPieces.AsPieces();
-    AllUsedPieces.insert(CurrentPiece);
+    set<Piece> CurrentUsedPieces = PrevField.AsPieces();
+    CurrentUsedPieces.insert(CurrentPiece);
+    Field CurrentField(CurrentUsedPieces);
 
     if (Layer == Config.GetValueInt("--placed-pieces")) {
-        std::cout << "New setup found: " << PiecesToString(AllUsedPieces) << "\n";
+        std::cout << "New setup found: " << FieldToString(CurrentField) << "\n";
         set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
-        for (const auto & sequence : ValidatorObj.ReturnCoveredQueues(AllUsedPieces, SetupSequences)) {
+        for (const auto & sequence : ValidatorObj.ReturnCoveredQueues(CurrentField, SetupSequences)) {
             PercentageRecordObj.UpdatePercentage(sequence, CurrentSolvePercent);
         };
         
@@ -47,7 +48,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
         
         //print out the global array of percentage each time a better field is found
         //"current best for each sequence: ..."
-        string Fumen = Field(AllUsedPieces).AsFumen(true);
+        string Fumen = CurrentField.AsFumen(true);
         std::cout << Fumen << "\n";
         return { CurrentPiece, CurrentSolvePercent, {{Fumen, {}}} }; //format abuse, only leaves will have empty vector of trees
     }
@@ -65,21 +66,22 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
 
     auto randomIt = newSeqMap.begin();
     std::advance(randomIt, rand() % newSeqMap.size());
-    string ReachablePieces = randomIt->first.substr(0, 2);
-    unordered_set<Piece> possibleNextPieces;
-    for (auto possibleNextPiece : ReachablePieces) {
-        set<int> newPieceIndexes = TetrominoDict.at(possibleNextPiece);
+    string ReachableTetrominos = randomIt->first.substr(0, 2);
+    set<Piece> possibleNextPieces;
+    for (const auto& possibleTetromino : ReachableTetrominos) {
+        set<int> newPieceIndexes = TetrominoDict.at(possibleTetromino);
         possibleNextPieces.insert(newPieceIndexes.begin(), newPieceIndexes.end());
     }
-    for (const auto& usedPiece : AllUsedPieces) {
+    for (const auto& usedPiece : CurrentField.AsPieces()) {
         possibleNextPieces.erase(usedPiece);
     }
 
     // get union of all remaining pieces & filter pieces with same tetromino as piece
-    unordered_set<Piece> candidatePieces;
+    set<Piece> candidatePieces;
     for (auto x : possibleNextPieces) {
-        unordered_set<Piece> nextUsedPieces = AllUsedPieces;
+        set<Piece> nextUsedPieces = CurrentField.AsPieces();
         nextUsedPieces.insert(x);
+        //std::cout << "checking " << x.AsIndex() << "\n";
         if (BuildCheckerObj.isBuildable(nextUsedPieces, Layer >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieces.insert(x);
         }
@@ -105,17 +107,17 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
     //}
 
 
-    SetupPool newPool(Layer + 1, AllUsedPieces, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
+    SetupPool newPool(Layer + 1, CurrentField, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
     //eliminate unbuildable fields from candidates
 
     //only call recursion for sequences with full cover with the picked PieceIndex
     vector<std::pair<string, vector<CommonFieldTree>>> OutputNodes;
     int LoopCount = 0;
     for (const auto& SeqMapEntry : newSeqMap) {
-        std::cout << "candidates(" << Layer << "): " << PiecesToString(AllUsedPieces) << " + " << candidatePieces.size() << "\n";
+        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
         for (auto candidatePiece : candidatePieces) {
             //filter out fields that do not cover the current sequences
-            unordered_set<Piece> nextUsedPieces = AllUsedPieces;
+            set<Piece> nextUsedPieces = CurrentField.AsPieces();
             nextUsedPieces.insert(candidatePiece);
 
             set<string> CandidateCoverSequences;
@@ -129,13 +131,16 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
             
             //shortcut re-checking percentages already confirmed by sfinder
             double currentSolveThresholdPercentage = PercentageRecordObj.GetThreshold();
-            bool AboveThreshold = PercentageRecordObj.SetupAboveThreshold(nextUsedPieces); //not used??
+            //bool AboveThreshold = PercentageRecordObj.SetupAboveThreshold(nextUsedPieces); //not used??
             
+            //std::cout << "go" << std::endl;
             double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieces, CandidateCoverSequences);
+            //std::cout << "done" << std::endl;
             
+
             if (nextSolvePercent < currentSolveThresholdPercentage) continue;
             std::cout << std::fixed << std::setprecision(2);
-            std::cout << "progress: " << PiecesToString(nextUsedPieces) << ", " << nextSolvePercent * 100 << "\n";
+            std::cout << "progress: " << FieldToString(nextUsedPieces) << ", " << nextSolvePercent * 100 << "\n";
 
             PercentageRecordObj.AddNewPercentage(nextUsedPieces, nextSolvePercent);
             CommonFieldTree result = newPool.ReturnTree(candidatePiece, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
@@ -173,7 +178,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
     auto randomIt = newSeqMap.begin();
     std::advance(randomIt, rand() % newSeqMap.size());
     string ReachablePieces = randomIt->first.substr(0, 2);
-    unordered_set<Piece> possibleNextPieces;
+    set<Piece> possibleNextPieces;
     for (auto possibleNextPiece : ReachablePieces) {
         set<int> newPieceIndexes = TetrominoDict.at(possibleNextPiece);
         possibleNextPieces.insert(newPieceIndexes.begin(), newPieceIndexes.end());
@@ -182,7 +187,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
     // get union of all remaining pieces & filter pieces with same tetromino as piece
     set<Piece> candidatePieces;
     for (auto x : possibleNextPieces) {
-        if (BuildCheckerObj.isBuildable(unordered_set<Piece>({x}), 0 >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
+        if (BuildCheckerObj.isBuildable(set<Piece>({x}), 0 >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieces.insert(x);
         }
         else {
@@ -191,9 +196,9 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
     }
 
 
-    SetupPool newPool(Layer + 1, unordered_set<Piece>({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
+    SetupPool newPool(Layer + 1, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
     vector<CommonFieldTree> OutputNodes;
-    std::cout << "candidates(" << 0 << "): " << " + " << PiecesToString(candidatePieces) << "\n";
+    std::cout << "candidates(" << 0 << "): " << " + " << FieldToString(candidatePieces) << "\n";
     for (auto candidatePieceIndex : candidatePieces) {
         CommonFieldTree result = newPool.ReturnTree(candidatePieceIndex, CoverSequences, CurrentSolvePercent, SetupPieceSequence);
         if (result.SolvePercent >= 0) { //negative solve percentage set when branch is invalid

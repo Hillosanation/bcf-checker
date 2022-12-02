@@ -12,7 +12,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-class Configuration { //TODO: global singleton?
+class Configuration { 
 	argparse::ArgumentParser parser;
 
 public:

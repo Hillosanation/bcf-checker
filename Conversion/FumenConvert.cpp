@@ -3,23 +3,6 @@
 #include <algorithm>
 #include <stdexcept>
 
-//FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const TPFFilledLine& PFFLine) {
-//	TBoard Output;
-//	bool SegmentBool = false;
-//	TPFFilledLine::const_iterator it = std::find(PFFLine.begin(), PFFLine.end(), SegmentBool);
-//	if (it != PFFLine.begin()) { //the first mino is not false
-//		Output.push_back({ 8,(int)(it - PFFLine.begin()) });
-//	}
-//	while (it != PFFLine.end()) {
-//		SegmentBool = !SegmentBool;
-//		TPFFilledLine::const_iterator newIt = std::find(it, PFFLine.end(), SegmentBool); //find start of the next segment
-//		TBoardInfo tmp(!SegmentBool * 8, (int)(newIt - it));
-//		Output.emplace_back(tmp); //check end iterator edge case works here
-//		it = newIt;
-//	}
-//	return Output;
-//}
-
 FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const PlayField& playField) {
 	TBoard Output;
 
@@ -32,31 +15,6 @@ FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const PlayFiel
 	}
 	return Output;
 }
-
-//FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayFieldFilled& PFFilled) {
-//	TBoard Output = {};
-//	int height = (int)PFFilled.size();
-//	std::vector<int> prefix = { 0, (23 - height) * 10 }; //prepending omitted empty field
-//	std::vector<bool> PFFLine = {};
-//	for (const auto& col : PFFilled) {
-//		PFFLine.insert(PFFLine.end(), col.begin(), col.end());
-//	}
-//	Output = MakePartialBoardRepresentation(PFFLine);
-//	if (Output.at(0).FumenIndex == 0+8) { //merge the blanks together
-//		prefix.at(1) += Output.at(0).Consecutive + 1; //offset of storage
-//		Output.erase(Output.begin());
-//	}
-//	TBoardInfo tmp(prefix[0], prefix[1]);
-//	Output.emplace(Output.begin(), tmp); //check if constructor works
-//	std::vector<int> suffix = { 0, 10 };
-//	if (Output.at(Output.size()-1).FumenIndex == 0 + 8) { //merge the blanks together
-//		suffix.at(1) += Output.at(Output.size() - 1).Consecutive + 1; //offset of storage
-//		Output.erase(Output.end() - 1);
-//	}
-//	TBoardInfo tmp2(suffix[0], suffix[1]);
-//	Output.emplace_back(tmp2);
-//	return Output;
-//}
 
 FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& playField) {
 	TBoardInfo prefix = { 0, 230 - (int)playField.size() }; //prepending omitted empty field
@@ -77,15 +35,6 @@ FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& play
 
 	return Output;
 }
-
-//PlayFieldFilled FumenConvert::ExpandToFullWidth(PlayFieldFilled PFFilled) { //depreciated, only useful in older versions
-//	while (PFFilled[0].size() != FieldWidth) {
-//		for (auto& col : PFFilled) {
-//			col.push_back(1);
-//		}
-//	}
-//	return PFFilled;
-//}
 
 std::vector<int> FumenConvert::ConvertTo64(TBoard Board) {
 	std::vector<int> Output = {};
@@ -114,13 +63,6 @@ void FumenConvert::test_FieldToFumen() {
 	};
 	std::cout << ConvertPlayField(field);
 }
-
-//std::string FumenConvert::ConvertPFF(PlayFieldFilled PFFilled) {
-//	if (PFFilled.size() != FieldWidth) throw std::invalid_argument("PFFilled has invalid width.");
-//	TBoard BoardRep = MakeBoardRepresentation(PFFilled);
-//	std::vector<int> IntVecRep = ConvertTo64(BoardRep);
-//	return "v115@" + IntVecToFuString(IntVecRep) + "AgH";
-//}
 
 std::string FumenConvert::ConvertPlayField(PlayField playField) {
 	if (playField.size() % FieldWidth != 0) throw std::invalid_argument("playField cannot be split evenly to columns.");

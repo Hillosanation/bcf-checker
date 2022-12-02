@@ -22,12 +22,17 @@ public:
         double SolvePercent;
         vector<std::pair<string, vector<CommonFieldTree>>> childNodes; //unordered_set<CommonFieldTree> possible?
 
-        CommonFieldTree& operator= (const CommonFieldTree&) = delete;
+        CommonFieldTree& operator=(CommonFieldTree const& rhs) {
+            this->UsedPiece = rhs.UsedPiece;
+            this->SolvePercent = rhs.SolvePercent;
+            this->childNodes = rhs.childNodes;
+            return *this;
+        }
     };
 
 private:
     int Layer;
-    Field UsedPieces;
+    Field PrevField;
     BuildChecker& BuildCheckerObj; //const?
     Validator& ValidatorObj; //const?
     PercentageRecord& PercentageRecordObj;
@@ -37,15 +42,15 @@ private:
 
     void AddToSeqMap(map<string, set<string>>& Map, string Key, string Entry);
 
-    string PiecesToString(unordered_set<Piece> Pieces);
+    string FieldToString(Field field);
 
     CommonFieldTree ReturnTree(Piece CurrentPiece, set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
 
 public:
     CommonFieldTree ReturnStartingTree(set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
 
-    SetupPool(int layer, Field prevUsedPieces, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
-        Layer(layer), UsedPieces(prevUsedPieces), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
+    SetupPool(int layer, Field extPrevField, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
+        Layer(layer), PrevField(extPrevField), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
 
     vector<CommonFieldTree> Start(set<string>& Sequences);
 };

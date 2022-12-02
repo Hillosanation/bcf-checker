@@ -22,16 +22,12 @@ class Validator {
 
     vector<vector<string>> SfinderCover(set<string> CoverSequences, vector<string> GluedFumens);
 
-    //string OverwriteFumen(string Original, string Overwrite);
-
     vector<string> GlueFumen(const string& UngluedFumen);
 
     string SwapHoldHead(const string& Sequence);
 
 public:
     Validator(Configuration& extConfig) : Config(extConfig) {};
-    
-    //string IndexesToFumen(set<int> Indexes, bool Colored);
 
     float SfinderPercent(const Field& field, const set<string>& CoverSequences);
 

@@ -7,7 +7,6 @@
 using std::string;
 using std::set;
 using std::map;
-using std::pair;
 using std::vector;
 
 
@@ -20,9 +19,14 @@ class PercentageRecord {
 	//map<string, double> SequenceRecord;
 	double RunningMinimum = 1.00;
 	set<string> IgnoredSequences;
+
 	struct SetupResult {
 		Field SetupField;
 		double SolvePercentage;
+
+		bool operator<(const SetupResult& rhs) const {
+			return (this->SetupField < rhs.SetupField) or (this->SolvePercentage < rhs.SolvePercentage);
+		}
 	};
 	set<SetupResult> SetupRecord;
 
