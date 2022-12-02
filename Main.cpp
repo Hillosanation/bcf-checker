@@ -2,7 +2,6 @@
 #include "./Misc/CommonDataTypes.h"
 #include "./PercentageRecord.h"
 #include "./SetupPool.h"
-#include "./TreeMerger.h"
 #include <iostream>
 #include <fstream>
 #include <set>

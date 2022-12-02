@@ -136,10 +136,8 @@
     <ClCompile Include="Misc\CommonDataTypes.cpp" />
     <ClCompile Include="Settings\Configuration.cpp" />
     <ClCompile Include="Conversion\FumenConvert.cpp" />
-    <ClCompile Include="Conversion\FieldCoverter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SetupPool.cpp" />
-    <ClCompile Include="TreeMerger.cpp" />
     <ClCompile Include="Validation\Validator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -150,9 +148,7 @@
     <ClInclude Include="Misc\CommonDataTypes.h" />
     <ClInclude Include="Settings\Configuration.h" />
     <ClInclude Include="Conversion\FumenConvert.h" />
-    <ClInclude Include="Conversion\FieldConverter.h" />
     <ClInclude Include="SetupPool.h" />
-    <ClInclude Include="TreeMerger.h" />
     <ClInclude Include="Validation\Validator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
