@@ -42,7 +42,7 @@ bool BuildChecker::AllPiecesSupported(vector<PlayField> PiecePlayFields, PlayFie
 }
 
 bool BuildChecker::isBuildable(Field field, bool NoRepeat = true) {
-    if (Config.GetValueBool("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) {
+    if (Config.GetValue<bool>("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) {
         return false;
     }
     if (BuildRecord.find(field) != BuildRecord.end()) {

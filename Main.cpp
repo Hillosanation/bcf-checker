@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     
     set<string> Sequences;
-    std::ifstream SequenceStream(Config.WorkingDir / Config.GetValueString("--sequence-path"));
+    std::ifstream SequenceStream(Config.WorkingDir / Config.GetValue<string>("--sequence-path"));
     for (const auto& row : ReadCSV(SequenceStream)) {
         Sequences.insert(row[0]);
     }
@@ -63,9 +63,9 @@ int main(int argc, char* argv[]) {
     
     //output
 
-    std::cout << "writing: " << Config.GetValueString("--output-path") << "\n";
+    std::cout << "writing: " << Config.GetValue<string>("--output-path") << "\n";
 
-    std::ofstream OutputStream(Config.WorkingDir / Config.GetValueString("--output-path"));
+    std::ofstream OutputStream(Config.WorkingDir / Config.GetValue<string>("--output-path"));
     OutputStream << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     for (const auto& tree : AllTrees) {
         PrintTree(tree, 0, OutputStream);

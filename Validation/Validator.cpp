@@ -21,7 +21,7 @@ vector<string> Validator::RunCommand(const string& Command, const bool& LogComma
 }
 
 vector<string> Validator::ReturnSfinderOutput(const string& SFinderCommand) {
-        fs::path SFinderPath = (std::filesystem::path)(Config.GetValueString("--sfinder-directory")) / "sfinder-fixed-180.jar";
+        fs::path SFinderPath = (std::filesystem::path)(Config.GetValue<string>("--sfinder-directory")) / "sfinder-fixed-180.jar";
         return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
     }
 

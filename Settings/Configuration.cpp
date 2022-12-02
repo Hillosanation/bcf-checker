@@ -47,19 +47,3 @@ Configuration::Configuration(PercentageRecord& extPercentageRecordObj, int argc,
 	}
 
 }
-
-int Configuration::GetValueInt(string key) {
-	return parser.get<int>(key);
-};
-
-double Configuration::GetValueDouble(string key) {
-	return parser.get<double>(key);
-};
-
-bool Configuration::GetValueBool(string key) {
-	return parser.get<bool>(key);
-};
-
-string Configuration::GetValueString(string key) {
-	return parser.get<string>(key);
-};

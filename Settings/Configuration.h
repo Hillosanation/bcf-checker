@@ -20,16 +20,8 @@ public:
 
 	Configuration(PercentageRecord& extPercentageRecordObj, int argc, char* argv[]);
 
-	//template<typename T> //im dumb and bad
-	//T GetValue(string key) {
-	//	auto x = parser.get<string>(key);
-	//	return static_cast<T>((string)x);
-	//}
-
-	int GetValueInt(string key);
-	double GetValueDouble(string key);
-	bool GetValueBool(string key);
-	string GetValueString(string key);
-
-
+	template<typename T> //im dumb and bad
+	T GetValue(string key) {
+		return parser.get<T>(key);
+	}
 };

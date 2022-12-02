@@ -37,7 +37,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
     CurrentUsedPieces.insert(CurrentPiece);
     Field CurrentField(CurrentUsedPieces);
 
-    if (Layer == Config.GetValueInt("--placed-pieces")) {
+    if (Layer == Config.GetValue<int>("--placed-pieces")) {
         std::cout << "New setup found: " << FieldToString(CurrentField) << "\n";
         set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
         for (const auto & sequence : ValidatorObj.ReturnCoveredQueues(CurrentField, SetupSequences)) {
@@ -53,7 +53,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
         return { CurrentPiece, CurrentSolvePercent, {{Fumen, {}}} }; //format abuse, only leaves will have empty vector of trees
     }
 
-    int NumSamePieces = Config.GetValueInt("--visible-pieces") + (Config.GetValueInt("--increased-vision") - 1) * Layer;
+    int NumSamePieces = Config.GetValue<int>("--visible-pieces") + (Config.GetValue<int>("--increased-vision") - 1) * Layer;
     //remove the piece used in coversequence
     set<string> newCoverSequences;
     for (auto sequence : CoverSequences) {
@@ -82,7 +82,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
         set<Piece> nextUsedPieces = CurrentField.AsPieces();
         nextUsedPieces.insert(x);
         //std::cout << "checking " << x.AsIndex() << "\n";
-        if (BuildCheckerObj.isBuildable(nextUsedPieces, Layer >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
+        if (BuildCheckerObj.isBuildable(nextUsedPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieces.insert(x);
         }
         else {
@@ -146,7 +146,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
             CommonFieldTree result = newPool.ReturnTree(candidatePiece, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
             if (result.SolvePercent >= 0) {
                 //record to node collection by next bag pieces
-                auto key = SeqMapEntry.first.substr(std::max(0, Config.GetValueInt("--visible-pieces") - Layer)); //TODO: should this be _numSetupPieces?
+                auto key = SeqMapEntry.first.substr(std::max(0, Config.GetValue<int>("--visible-pieces") - Layer)); //TODO: should this be _numSetupPieces?
                 bool found = false; //TODO: turn OutputNodes from vector to map?
                 for (auto& node : OutputNodes) {
                     if (node.first == key) {
@@ -162,7 +162,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
         std::cout << "--End of Layer " << Layer << "--\n";
         //if there isn't at least one valid cover for the current set of sequences, it fails to completely cover, so return negative solve percentage
         int failBranches = (LoopCount + 1) - (int)OutputNodes.size();
-        if (failBranches / newSeqMap.size() > (1 - Config.GetValueDouble("--tree-succeed-percentage"))) return {-1, -1, {}};
+        if (failBranches / newSeqMap.size() > (1 - Config.GetValue<double>("--tree-succeed-percentage"))) return {-1, -1, {}};
         LoopCount++;
     }
     //Termination: return all fields that cover the final queue
@@ -172,7 +172,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
 
 SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence) { //used when layer = 0
     //remove the piece used in coversequence
-    map<string, set<string>> newSeqMap = CreateNewSeqMap(CoverSequences, Config.GetValueInt("--visible-pieces")); //iterate over newSeqDict.values() to get the next CoverSequences
+    map<string, set<string>> newSeqMap = CreateNewSeqMap(CoverSequences, Config.GetValue<int>("--visible-pieces")); //iterate over newSeqDict.values() to get the next CoverSequences
     // for each tetromino seen in sequence, collect (pool.ReturnTree with all setups containing the piece, per candidate piece, per subset of sequence)
 
     auto randomIt = newSeqMap.begin();
@@ -187,7 +187,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
     // get union of all remaining pieces & filter pieces with same tetromino as piece
     set<Piece> candidatePieces;
     for (auto x : possibleNextPieces) {
-        if (BuildCheckerObj.isBuildable(set<Piece>({x}), 0 >= Config.GetValueInt("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
+        if (BuildCheckerObj.isBuildable(set<Piece>({x}), 0 >= Config.GetValue<int>("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieces.insert(x);
         }
         else {
@@ -209,10 +209,10 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
 }
 
 vector<SetupPool::CommonFieldTree> SetupPool::Start(set<string>& Sequences) {
-    if (Config.GetValueInt("--visible-pieces") < 2) throw std::invalid_argument("Not enough common pieces to work with.");
-    if (Config.GetValueInt("--placed-pieces") > 4) throw std::invalid_argument("Currently cannot search setups with possible skims.");
+    if (Config.GetValue<int>("--visible-pieces") < 2) throw std::invalid_argument("Not enough common pieces to work with.");
+    if (Config.GetValue<int>("--placed-pieces") > 4) throw std::invalid_argument("Currently cannot search setups with possible skims.");
 
-    map<string, set<string>> newSeqMap = CreateNewSeqMap(Sequences, Config.GetValueInt("--visible-pieces"));
+    map<string, set<string>> newSeqMap = CreateNewSeqMap(Sequences, Config.GetValue<int>("--visible-pieces"));
     vector<CommonFieldTree> Output;
 
     SetupPool newPool(0, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
