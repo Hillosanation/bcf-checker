@@ -4,3 +4,4 @@ temp/*
 output/*
 input/sequence.txt
 temp/*
+.vs/**
