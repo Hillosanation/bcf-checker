@@ -26,10 +26,12 @@ class Validator {
 
     string SwapHoldHead(const string& Sequence);
 
+    double RoundToDP(double x, int DecimalPlaces);
+
 public:
     Validator(Configuration& extConfig) : Config(extConfig) {};
 
-    float SfinderPercent(const Field& field, const set<string>& CoverSequences);
+    double SfinderPercent(const Field& field, const set<string>& CoverSequences);
 
     set<string> ReturnCoveredQueues(const Field& field, const set<string>& CoverSequences);
 };

@@ -53,7 +53,7 @@ vector<string> Validator::GlueFumen(const string& UngluedFumen) {
     return RunCommand("node ./dependancies/glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
 }
 
-float Validator::SfinderPercent(const Field& field, const set<string>& CoverSequences) {
+double Validator::SfinderPercent(const Field& field, const set<string>& CoverSequences) {
     fs::path PatternPath = Config.WorkingDir / R"(temp/pattern_temp.txt)";
     std::ofstream PatternStream(PatternPath);
     for (const auto& coverSequence : CoverSequences) {
@@ -71,7 +71,7 @@ float Validator::SfinderPercent(const Field& field, const set<string>& CoverSequ
         }
     }
     if (Result != "") {
-        return round(std::stof(Result)*100) / 10000;
+        return RoundToDP(std::stod(Result)/100,4);
     }
     else {
         throw std::runtime_error("Success percentage is not found");
@@ -80,6 +80,10 @@ float Validator::SfinderPercent(const Field& field, const set<string>& CoverSequ
 
 string Validator::SwapHoldHead(const string& Sequence) {
     return Sequence.substr(1, 1) + Sequence.substr(0, 1) + Sequence.substr(2);
+}
+
+double Validator::RoundToDP(double x, int DecimalPlaces) {
+    return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
 }
 
 set<string> Validator::ReturnCoveredQueues(const Field& field, const set<string>& CoverSequences) {

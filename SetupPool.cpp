@@ -78,9 +78,10 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
 
     // get union of all remaining pieces & filter pieces with same tetromino as piece
     set<Piece> candidatePieces;
-    for (auto x : possibleNextPieces) {
+    for (const auto &x : possibleNextPieces) {
         set<Piece> nextUsedPieces = CurrentField.AsPieces();
         nextUsedPieces.insert(x);
+
         //std::cout << "checking " << x.AsIndex() << "\n";
         if (BuildCheckerObj.isBuildable(nextUsedPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
             candidatePieces.insert(x);
@@ -92,19 +93,20 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
     
 
     //manual pruning
-    //set<int> r;
-    ////if (Layer == 0) {
-    ////    r = { 249, 250, 251, 252, 253 };
-    ////} if (Layer == 1) {
-    ////    r = { 126, 127, 128, 129, 133 };
-    ////} if (Layer == 2) {
-    ////    r = { 233, 236, 237, 238, 242, 243 };
-    ////} if (Layer == 3) {
-    ////    r = { 361, 362 };
-    ////}
-    //for (auto i : r) {
-    //    candidatePieces.erase(i);
+    //set<Piece> r;
+    //if (Layer == 0) {
+    //    r = { 54, 55, 56, 57, 58, 59, 60 };
+    //} if (Layer == 1) {
+    //    r = { 129, 135, 136, 138, 139, 140, 141, 142, 154, 155, 156, 157, 158, 159, 160, 161, 171, 177, 178, 180, 181, 182, 183, 184, 194, 195, 197, 198, 199, 200, 201, 202, 366, 372, 373, 375, 376, 377, 378, 379, 390 };
+    //} if (Layer == 2) {
+    //    r = { 135, 138, 139, 140, 141, 142, 155, 156, 157, 158, 159, 160, 161, 177, 180, 181, 182, 183, 184, 194, 197, 198, 199, 200, 201, 202, 221, 224, 225, 226, 227, 228, };
+    //} if (Layer == 3) {
+    //    r = { 361, 362 };
     //}
+    //for (auto i : r) {
+    //    candidatePieces.erase({ i });
+    //}
+
 
 
     SetupPool newPool(Layer + 1, CurrentField, BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
@@ -126,21 +128,18 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, set<string>
                 if (pos == std::string::npos) throw std::runtime_error("Piece to remove from sequence does not exist.");
                 CandidateCoverSequences.insert(sequence.replace(pos, 1, ""));
             }
-
-            //std::cout << "trying: " << SetToString(nextUsedPieceIndexes) << "\n";
             
             //shortcut re-checking percentages already confirmed by sfinder
-            double currentSolveThresholdPercentage = PercentageRecordObj.GetThreshold();
+            double currentSolveThresholdPercent = PercentageRecordObj.GetThreshold();
             //bool AboveThreshold = PercentageRecordObj.SetupAboveThreshold(nextUsedPieces); //not used??
             
-            //std::cout << "go" << std::endl;
             double nextSolvePercent = ValidatorObj.SfinderPercent(nextUsedPieces, CandidateCoverSequences);
-            //std::cout << "done" << std::endl;
+            //std::cout << nextSolvePercent << " < " << currentSolveThresholdPercentage << "\n";
             
 
-            if (nextSolvePercent < currentSolveThresholdPercentage) continue;
+            if (nextSolvePercent < currentSolveThresholdPercent) continue;
             std::cout << std::fixed << std::setprecision(2);
-            std::cout << "progress: " << FieldToString(nextUsedPieces) << ", " << nextSolvePercent * 100 << "\n";
+            std::cout << "progress: " << FieldToString(nextUsedPieces) << ", " << nextSolvePercent*100 << "\n";
 
             PercentageRecordObj.AddNewPercentage(nextUsedPieces, nextSolvePercent);
             CommonFieldTree result = newPool.ReturnTree(candidatePiece, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
@@ -194,6 +193,9 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(set<string> CoverSequen
             //std::cout << SetToString(nextUsedPieces) << " failed.\n";
         }
     }
+
+    //manual pruning
+    //candidatePieces = { 61 };
 
 
     SetupPool newPool(Layer + 1, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj);
