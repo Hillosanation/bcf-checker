@@ -89,17 +89,17 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     
 
     //manual pruning
-    set<Piece> r;
-    if (Layer == 1) {
-        r = { 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31, 32, 37, 133, 134, 135, 136, 137, 138, 139, 140, 151, 152, 153, 154, 155, 156, 157, 158, 159, 175, 176, 177, 178, 180, 181, 182, };
-    } if (Layer == 2) {
-        r = { 11, 12, 13, 16, 17, 21, 22, };
-    } if (Layer == 3) {
-        r = { 43, 44, 45, 49, 50, 54, 55, 56, };
-    }
-    for (auto i : r) {
-        candidatePieces.erase({ i });
-    }
+    //set<Piece> r;
+    //if (Layer == 1) {
+    //    r = { 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31, 32, 37, 133, 134, 135, 136, 137, 138, 139, 140, 151, 152, 153, 154, 155, 156, 157, 158, 159, 175, 176, 177, 178, 180, 181, 182, };
+    //} if (Layer == 2) {
+    //    r = { 11, 12, 13, 16, 17, 21, 22, };
+    //} if (Layer == 3) {
+    //    r = { 43, 44, 45, 49, 50, 54, 55, 56, };
+    //}
+    //for (auto i : r) {
+    //    candidatePieces.erase({ i });
+    //}
 
 
 
@@ -191,9 +191,9 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(unordered_set<string> C
     }
 
     //manual pruning
-    for (auto i : { 21, 22, 23, 24, 25, }) {
-        candidatePieces.erase({ i });
-    }
+    //for (auto i : { 21, 22, 23, 24, 25, }) {
+    //    candidatePieces.erase({ i });
+    //}
 
     SetupPool newPool(Layer + 1, Field({}), BuildCheckerObj, SFinder, Config, PercentageRecordObj);
     vector<CommonFieldTree> OutputNodes;
