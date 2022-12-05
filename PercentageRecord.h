@@ -1,12 +1,12 @@
 #pragma once
-#include <map>
 #include <set>
+#include <unordered_set>
 #include <string>
 #include <vector>
 #include "./Field.h"
 using std::string;
 using std::set;
-using std::map;
+using std::unordered_set;
 using std::vector;
 
 
@@ -16,9 +16,8 @@ class PercentageRecord {
 		double BestPercent;
 	};
 	vector<SequenceResult> SequenceRecord;
-	//map<string, double> SequenceRecord;
 	double RunningMinimum = 1.00;
-	set<string> IgnoredSequences;
+	unordered_set<string> IgnoredSequences;
 
 	struct SetupResult {
 		Field SetupField;
@@ -41,11 +40,11 @@ public:
 
 	void AddToIgnoredSequences(string newSequence);
 
-	set<string> ReturnSetupSequences();
+	unordered_set<string> ReturnSetupSequences();
 
 	string BestPercentagesString();
 
-	bool SetupAboveThreshold(Field SetupField);
+	bool SetupAboveThreshold(const Field& SetupField);
 
-	void AddNewPercentage(Field SetupField, double SolvePercentage);
+	void AddNewPercentage(const Field& SetupField, double SolvePercentage);
 };

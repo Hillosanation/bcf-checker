@@ -1,17 +1,19 @@
 #pragma once
 #include <set>
+#include <unordered_set>
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 
 #include "./Validation/BuildChecker.h"
-#include "./Validation/Validator.h"
+#include "./Validation/SFinderInterface.h"
 #include "./Settings/Configuration.h"
 #include "./Misc/CommonDataTypes.h"
 #include "./PercentageRecord.h"
 
 using std::set;
-using std::map;
+using std::unordered_set;
+using std::unordered_map;
 using std::string;
 using std::vector;
 
@@ -32,25 +34,23 @@ public:
 
 private:
     int Layer;
-    Field PrevField;
-    BuildChecker& BuildCheckerObj; //const?
-    Validator& ValidatorObj; //const?
+    const Field PrevField;
+    BuildChecker& BuildCheckerObj;
+    const SFinderInterface& SFinder;
     PercentageRecord& PercentageRecordObj;
-    Configuration& Config;
+    const Configuration& Config;
 
-    map<string, set<string>> CreateNewSeqMap(const set<string>& Sequences, int SamePieces);
+    unordered_map<string, unordered_set<string>> CreateNewSeqMap(const unordered_set<string>& Sequences, int SamePieces);
 
-    void AddToSeqMap(map<string, set<string>>& Map, string Key, string Entry);
+    string FieldToString(const Field& field);
 
-    string FieldToString(Field field);
-
-    CommonFieldTree ReturnTree(Piece CurrentPiece, set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
+    CommonFieldTree ReturnTree(Piece CurrentPiece, unordered_set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
 
 public:
-    CommonFieldTree ReturnStartingTree(set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
+    CommonFieldTree ReturnStartingTree(unordered_set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence);
 
-    SetupPool(int layer, Field extPrevField, BuildChecker& prevBuildCheckerObj, Validator& extValidatorObj, Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
-        Layer(layer), PrevField(extPrevField), BuildCheckerObj(prevBuildCheckerObj), ValidatorObj(extValidatorObj), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
+    SetupPool(int layer, const Field extPrevField, BuildChecker& prevBuildCheckerObj, const SFinderInterface& extSFinder, const Configuration& extConfig, PercentageRecord& extPercentageRecordObj) :
+        Layer(layer), PrevField(extPrevField), BuildCheckerObj(prevBuildCheckerObj), SFinder(extSFinder), Config(extConfig), PercentageRecordObj(extPercentageRecordObj) {};
 
-    vector<CommonFieldTree> Start(set<string>& Sequences);
+    vector<CommonFieldTree> Start(const unordered_set<string>& Sequences);
 };

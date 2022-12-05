@@ -33,7 +33,7 @@
     <ClCompile Include="Settings\Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Validation\Validator.cpp">
+    <ClCompile Include="Validation\SFinderInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PercentageRecord.cpp">
@@ -62,7 +62,7 @@
     <ClInclude Include="Settings\Configuration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Validation\Validator.h">
+    <ClInclude Include="Validation\SFinderInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PercentageRecord.h">

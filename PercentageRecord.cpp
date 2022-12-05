@@ -1,12 +1,11 @@
 #include "PercentageRecord.h"
 #include <sstream>
 //#include <iostream> //debug
-#include "Misc/CommonDataTypes.h"
 
 void PercentageRecord::UpdateMinimum() {
 	RunningMinimum = 1.00;
 	for (const auto& sequenceResult : SequenceRecord) {
-		if (std::find(IgnoredSequences.begin(), IgnoredSequences.end(), sequenceResult.Sequence) == IgnoredSequences.end()) {
+		if (!IgnoredSequences.contains(sequenceResult.Sequence)) {
 			//std::cout << RunningMinimum << "<-" << entry.second << "\n";
 			RunningMinimum = std::min(RunningMinimum, sequenceResult.BestPercent);
 		}
@@ -38,8 +37,8 @@ void PercentageRecord::AddToIgnoredSequences(string newSequence) {
 	UpdateMinimum();
 }
 
-set<string> PercentageRecord::ReturnSetupSequences() {
-	set<string> Output;
+unordered_set<string> PercentageRecord::ReturnSetupSequences() {
+	unordered_set<string> Output;
 	for (const auto& sequenceResult : SequenceRecord) {
 		Output.insert(sequenceResult.Sequence);
 	}
@@ -56,7 +55,7 @@ string PercentageRecord::BestPercentagesString() { //non-functional
 	return "{" + Output.substr(0, Output.length() - 2) + "}";
 }
 
-bool PercentageRecord::SetupAboveThreshold(Field setupField) { //checks if the shape is known to have a high solvepercentage, unused
+bool PercentageRecord::SetupAboveThreshold(const Field& setupField) { //checks if the shape is known to have a high solvepercentage, unused
 	//remove outdated percentages while we're here
 	double threshold = GetThreshold();
 	for (auto setup : SetupRecord) {
@@ -69,7 +68,7 @@ bool PercentageRecord::SetupAboveThreshold(Field setupField) { //checks if the s
 	return it != SetupRecord.end();
 }
 
-void PercentageRecord::AddNewPercentage(Field setupField, double SolvePercentage) {
+void PercentageRecord::AddNewPercentage(const Field& setupField, double SolvePercentage) {
 	if (SolvePercentage >= GetThreshold()) { //failsafe
 		SetupRecord.insert({ setupField, SolvePercentage });
 	}

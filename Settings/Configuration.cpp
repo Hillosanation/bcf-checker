@@ -1,7 +1,5 @@
-#include "./Configuration.h"
 #include <fstream>
-#include <string>
-#include <stdexcept>
+#include "./Configuration.h"
 #include "../Misc/CommonDataTypes.h"
 
 Configuration::Configuration(PercentageRecord& extPercentageRecordObj, int argc, char* argv[]) {

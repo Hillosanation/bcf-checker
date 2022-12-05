@@ -1,27 +1,22 @@
 #pragma once
-#include <vector>
 #include <set>
+#include <unordered_set>
 #include "../Settings/Configuration.h"
-#include "../PercentageRecord.h"
 #include "../Field.h"
 #include "../Misc/CommonDataTypes.h"
 
 class BuildChecker {
 private:
-    Configuration& Config;
+    const Configuration& Config;
 
     std::set<Field> BuildRecord;
 
-    bool PieceSupported(PlayField PieceField, PlayField CombinedField);
-
-    PlayField RemoveFromField(PlayField OriginalField, PlayField RemoveField);
-
-    bool AllPiecesSupported(vector<PlayField> SeparatedFields, PlayField CombinedField);
+    bool PieceSupported(const unordered_set<int>& PieceMinoIndex, const unordered_set<int>& CombinedMinoIndex) const;
 
 public:
-    BuildChecker(Configuration& extConfig);
+    BuildChecker(const Configuration& extConfig) : Config(extConfig) {};
 
-    bool isBuildable(Field field, bool NoRepeat);
+    bool shouldSearch(const Field& field, bool NoRepeat = true);
 
 };
 

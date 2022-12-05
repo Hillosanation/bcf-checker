@@ -1,10 +1,9 @@
 #include "./CommonDataTypes.h"
 #include <stdexcept>
-#include <fstream>
 #include <sstream>
 
-set<int> Range(int a, int b) {
-    set<int> OutputSet;
+unordered_set<int> Range(int a, int b) {
+    unordered_set<int> OutputSet;
     for (size_t i = a; i < b; i++) {
         OutputSet.insert((int)i);
     }

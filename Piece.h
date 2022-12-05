@@ -1,16 +1,21 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <set>
+#include <unordered_set>
 #include <stdexcept>
-using std::map;
-using std::set;
+#include <vector>
+using std::unordered_map;
+using std::unordered_set;
+using std::vector;
 
 class Piece {
-    static const map<char, int> FumenIndex;
+    static const unordered_map<char, int> FumenIndex;
 
-    static const map<int, char> TetrominoDict;
+    static const unordered_map<int, char> TetrominoDict;
 
-    static const map<int, int> MirrorMap;
+    static const unordered_map<int, int> MirrorMap;
+
+    static const vector<unordered_set<int>> FieldPermutations;
 
 	int Index;
 
@@ -24,6 +29,8 @@ public:
     char AsTetromino() const;
 
     int AsFumenIndex() const;
+
+    unordered_set<int> AsMinoIndex() const;
         
     bool operator==(const Piece& rhs) const;
 

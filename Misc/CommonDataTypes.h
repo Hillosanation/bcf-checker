@@ -1,18 +1,19 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <set>
+#include <unordered_set>
 #include <map>
+#include <fstream>
 using std::string;
 using std::vector;
 using std::map;
-using std::set;
+using std::unordered_set;
 
 typedef std::vector<int> PlayField;
 
-set<int> Range(int a, int b);
+unordered_set<int> Range(int a, int b);
 
-const map<char, set<int>> TetrominoDict = {
+const map<char, unordered_set<int>> PieceIndexesWithTetromino = {
     { 'I', Range(0,37 + 1) },
     { 'L', Range(38, 121 + 1) },
     { 'J', Range(122,205 + 1) },

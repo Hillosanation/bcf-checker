@@ -36,7 +36,7 @@ FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& play
 	return Output;
 }
 
-std::vector<int> FumenConvert::ConvertTo64(TBoard Board) {
+vector<int> FumenConvert::ConvertTo64(const TBoard& Board) {
 	std::vector<int> Output = {};
 	for (const auto& item : Board) {
 		int total = 240 * item.FumenIndex + item.Consecutive;
@@ -46,7 +46,7 @@ std::vector<int> FumenConvert::ConvertTo64(TBoard Board) {
 	return Output;
 }
 
-std::string FumenConvert::IntVecToFuString(std::vector<int> IntVec) {
+string FumenConvert::IntVecToFuString(const vector<int>& IntVec) {
 	std::string Output;
 	for (const auto& item : IntVec) {
 		Output += FumenString[item];
@@ -64,7 +64,7 @@ void FumenConvert::test_FieldToFumen() {
 	std::cout << ConvertPlayField(field);
 }
 
-std::string FumenConvert::ConvertPlayField(PlayField playField) {
+string FumenConvert::ConvertPlayField(const PlayField& playField) {
 	if (playField.size() % FieldWidth != 0) throw std::invalid_argument("playField cannot be split evenly to columns.");
 	TBoard BoardRep = MakeBoardRepresentation(playField);
 	std::vector<int> IntVecRep = ConvertTo64(BoardRep);

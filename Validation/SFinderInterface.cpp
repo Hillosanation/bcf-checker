@@ -3,10 +3,10 @@
 #include <regex>
 #include <iostream>
 #include <filesystem>
-#include "./Validator.h"
+#include "./SFinderInterface.h"
 #include "../Settings/Configuration.h"
 
-vector<string> Validator::RunCommand(const string& Command, const bool& LogCommand = true) {
+vector<string> SFinderInterface::RunCommand(const string& Command, const bool& LogCommand = true) const {
     string WrappedCommand = "\"" + Command + "\"";
     //std::cout << WrappedCommand << "\n";
     std::ifstream OutputStream(_popen(WrappedCommand.c_str(), "r"));
@@ -20,32 +20,32 @@ vector<string> Validator::RunCommand(const string& Command, const bool& LogComma
     return Output;
 }
 
-vector<string> Validator::ReturnSfinderOutput(const string& SFinderCommand) {
-        fs::path SFinderPath = (std::filesystem::path)(Config.GetValue<string>("--sfinder-directory")) / "sfinder-fixed-180.jar";
-        return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
+vector<string> SFinderInterface::ReturnSfinderOutput(const string& SFinderCommand) const {
+    fs::path SFinderPath = (std::filesystem::path)(Config.GetValue<string>("--sfinder-directory")) / "sfinder-fixed-180.jar";
+    return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
+}
+
+vector<vector<string>> SFinderInterface::SfinderCover(unordered_set<string> CoverSequences, vector<string> GluedFumens) const {
+    fs::path FieldPath = Config.WorkingDir / "temp/field_temp.txt";
+    std::ofstream FieldStream(FieldPath);
+    fs::path PatternPath = Config.WorkingDir / "temp/pattern_temp.txt";
+    std::ofstream PatternStream(PatternPath);
+    for (const auto& coverSequence : CoverSequences) {
+        PatternStream << coverSequence << "\n";
     }
-
-vector<vector<string>> Validator::SfinderCover(set<string> CoverSequences, vector<string> GluedFumens) {
-        fs::path FieldPath = Config.WorkingDir / "temp/field_temp.txt";
-        std::ofstream FieldStream(FieldPath);
-        fs::path PatternPath = Config.WorkingDir / "temp/pattern_temp.txt";
-        std::ofstream PatternStream(PatternPath);
-        for (const auto& coverSequence : CoverSequences) {
-            PatternStream << coverSequence << "\n";
-        }
-        for (const auto& gluedFumen : GluedFumens) {
-            FieldStream << gluedFumen << "\n";
-        }
-        PatternStream.close();
-        FieldStream.close();
-
-        fs::path CSVFilePath = Config.WorkingDir / "temp/cover_temp.csv";
-        ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d 180 -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
-        std::ifstream CSVFileStream(CSVFilePath);
-        return ReadCSV(CSVFileStream);
+    for (const auto& gluedFumen : GluedFumens) {
+        FieldStream << gluedFumen << "\n";
     }
+    PatternStream.close();
+    FieldStream.close();
 
-vector<string> Validator::GlueFumen(const string& UngluedFumen) {
+    fs::path CSVFilePath = Config.WorkingDir / "temp/cover_temp.csv";
+    ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d 180 -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
+    std::ifstream CSVFileStream(CSVFilePath);
+    return ReadCSV(CSVFileStream);
+}
+
+vector<string> SFinderInterface::GlueFumen(const string& UngluedFumen) const {
     fs::path FumenPath = Config.WorkingDir / "temp/unglued_fumen_temp.txt";
     std::ofstream FumenStream(FumenPath);
     FumenStream << UngluedFumen << "\n";
@@ -53,7 +53,7 @@ vector<string> Validator::GlueFumen(const string& UngluedFumen) {
     return RunCommand("node ./dependancies/glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
 }
 
-double Validator::SfinderPercent(const Field& field, const set<string>& CoverSequences) {
+double SFinderInterface::SfinderPercent(const Field& field, const unordered_set<string>& CoverSequences) const {
     fs::path PatternPath = Config.WorkingDir / R"(temp/pattern_temp.txt)";
     std::ofstream PatternStream(PatternPath);
     for (const auto& coverSequence : CoverSequences) {
@@ -71,25 +71,25 @@ double Validator::SfinderPercent(const Field& field, const set<string>& CoverSeq
         }
     }
     if (Result != "") {
-        return RoundToDP(std::stod(Result)/100,4);
+        return RoundToDP(std::stod(Result) / 100, 4);
     }
     else {
         throw std::runtime_error("Success percentage is not found");
     }
 }
 
-string Validator::SwapHoldHead(const string& Sequence) {
+string SFinderInterface::SwapHoldHead(const string& Sequence) const {
     return Sequence.substr(1, 1) + Sequence.substr(0, 1) + Sequence.substr(2);
 }
 
-double Validator::RoundToDP(double x, int DecimalPlaces) {
+double SFinderInterface::RoundToDP(double x, int DecimalPlaces) const {
     return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
 }
 
-set<string> Validator::ReturnCoveredQueues(const Field& field, const set<string>& CoverSequences) {
-    set<string> OutputSequences;
+unordered_set<string> SFinderInterface::ReturnCoveredQueues(const Field& field, const unordered_set<string>& CoverSequences) const {
+    unordered_set<string> OutputSequences;
 
-    set<string> ExpandedCoverSequences;
+    unordered_set<string> ExpandedCoverSequences;
     for (auto const& sequence : CoverSequences) {
         ExpandedCoverSequences.insert(sequence);
         ExpandedCoverSequences.insert(SwapHoldHead(sequence));
@@ -98,7 +98,7 @@ set<string> Validator::ReturnCoveredQueues(const Field& field, const set<string>
     vector<vector<string>> CoverData = SfinderCover(ExpandedCoverSequences, GlueFumen(field.AsFumen(true)));
     CoverData.erase(CoverData.begin());
 
-    set<string> AcceptedSequences;
+    unordered_set<string> AcceptedSequences;
     for (const auto& CoverRow : CoverData) {
         if (std::find(CoverRow.begin() + 1, CoverRow.end(), "O") != CoverRow.end()) {
             AcceptedSequences.insert(CoverRow[0]);

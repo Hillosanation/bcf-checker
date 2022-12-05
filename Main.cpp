@@ -4,11 +4,11 @@
 #include "./SetupPool.h"
 #include <iostream>
 #include <fstream>
-#include <set>
+#include <unordered_set>
 #include <vector>
 #include <iomanip>
 //#include <filesystem>
-using std::set;
+using std::unordered_set;
 using std::vector;
 
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     Configuration Config(PercentageRecordObj, argc, argv);
     std::cout << "Best chance: " << PercentageRecordObj.BestPercentagesString() << "\n";
     
-    set<string> Sequences;
+    unordered_set<string> Sequences;
     std::ifstream SequenceStream(Config.WorkingDir / Config.GetValue<string>("--sequence-path"));
     for (const auto& row : ReadCSV(SequenceStream)) {
         Sequences.insert(row[0]);
@@ -46,9 +46,9 @@ int main(int argc, char* argv[]) {
 
     std::cout << "Begin searching for congruents\n";
     BuildChecker BuildCheckerObj(Config);
-    Validator ValidatorObj(Config);
+    SFinderInterface SFinder(Config);
 
-    vector<SetupPool::CommonFieldTree> QueueTrees = SetupPool(-1, Field({}), BuildCheckerObj, ValidatorObj, Config, PercentageRecordObj).Start(Sequences);
+    vector<SetupPool::CommonFieldTree> QueueTrees = SetupPool(-1, Field({}), BuildCheckerObj, SFinder, Config, PercentageRecordObj).Start(Sequences);
 
     vector<SetupPool::CommonFieldTree> AllTrees;
     for (const auto& tree : QueueTrees) {

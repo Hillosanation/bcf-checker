@@ -1,68 +1,46 @@
 #include "BuildChecker.h"
 #include <stdexcept>
 
-using std::vector;
-
-bool BuildChecker::PieceSupported(PlayField PiecePlayField, PlayField CombinedPlayField) {
+bool BuildChecker::PieceSupported(const unordered_set<int>& PieceMinoIndex, const unordered_set<int>& CombinedMinoIndex) const {
     //if (PiecePlayField.size() != CombinedPlayField.size()) throw "Size of fields are not equal."; //not needed
 
-    PlayField upperField = PiecePlayField;
-    upperField.insert(upperField.end(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-    PlayField lowerField = PiecePlayField;
-    lowerField.insert(lowerField.begin(), { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+    unordered_set<int> SupportingMinoIndex = CombinedMinoIndex;
+    unordered_set<int> groundMinoIndex = { 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 }; //from the minoIndexes of the ground in 4 line PC
+    SupportingMinoIndex.insert(groundMinoIndex.begin(), groundMinoIndex.end());
 
-    //all possible filled mino positions that can support the current piece
-    PlayField DependancyField = RemoveFromField(lowerField, upperField);
-
-    for (size_t i = 0; i < DependancyField.size(); i++) {
-        if ((DependancyField[i] != 0) && (CombinedPlayField[i] != 0)) return true;
+    unordered_set<int> dependancyMinoIndex = PieceMinoIndex;
+    //remove mino above other minos
+    for (const auto& minoIndex : PieceMinoIndex) {
+        dependancyMinoIndex.erase(minoIndex - 10); //equals to fieldWidth
     }
+
+    for (const auto& minoIndex : dependancyMinoIndex) {
+        if (SupportingMinoIndex.contains(minoIndex + 10)) return true; //check if there is a mino below any of the dependancy minos
+    }
+
     return false;
 }
 
-PlayField BuildChecker::RemoveFromField(PlayField StartingPlayField, PlayField RemovePlayField) {
-    if (StartingPlayField.size() != RemovePlayField.size()) throw "Size of fields are not equal.";
-    vector<int> newField = StartingPlayField;
-    for (size_t i = 0; i < StartingPlayField.size(); i++) {
-        if (RemovePlayField[i] != 0) {
-            newField[i] = 0;
-        }
-    }
-    return newField;
-}
-
-bool BuildChecker::AllPiecesSupported(vector<PlayField> PiecePlayFields, PlayField CombinedPlayField) {
-    //the new column represents the floor
-    CombinedPlayField.insert(CombinedPlayField.end(), { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 });
-
-    for (const auto& PiecePlayField : PiecePlayFields) {
-        if (!PieceSupported(PiecePlayField, CombinedPlayField)) return false;
-    }
-    return true;
-}
-
-bool BuildChecker::isBuildable(Field field, bool NoRepeat = true) {
+bool BuildChecker::shouldSearch(const Field& field, bool NoRepeat) {
+    //we should only search the current field if 1. it leads to other fields that we haven't yet searched and 2. it is builable
+    //checking condition 1
     if (Config.GetValue<bool>("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) {
-        return false;
+        return false; //ignore if mirror was checked
     }
     if (BuildRecord.find(field) != BuildRecord.end()) {
-        return false;
+        return false; //ignore if current was checked
     }
     else {
         if (NoRepeat) BuildRecord.insert(field);
     }
 
-    vector<int> combinedPlayField = field.AsPlayField(false);
-    auto NonEmptyMino = [](int MinoType) { return MinoType != 0; };
-    if (std::count_if(combinedPlayField.begin(), combinedPlayField.end(), NonEmptyMino) != 4 * field.AsPieces().size()) { //all pieces do not intersect
-        return false;
-    }
+    //checking condition 2
+    unordered_set<int> combinedMinoIndex = field.AsMinoIndex();
+    if (combinedMinoIndex.size() % 4 != 0) return false; //all pieces should not intersect
 
-    vector<vector<int>> piecePlayFields;
     for (const auto& piece : field.AsPieces()) {
-        piecePlayFields.push_back(Field({ piece }).AsPlayField(false));
+        if (!PieceSupported(piece.AsMinoIndex(), combinedMinoIndex)) return false;
     }
-    return AllPiecesSupported(piecePlayFields, combinedPlayField);
+    return true;
 }
 
-BuildChecker::BuildChecker(Configuration& extConfig) : Config(extConfig) {}

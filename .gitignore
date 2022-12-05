@@ -4,3 +4,4 @@ input/sequence.txt
 temp/**
 output/**
 .vs/**
+bcf-checker.vcxproj.user
