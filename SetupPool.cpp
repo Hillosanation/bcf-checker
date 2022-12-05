@@ -36,7 +36,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     if (Layer == Config.GetValue<int>("--placed-pieces")) {
         std::cout << "New setup found: " << FieldToString(CurrentField) << "\n";
         unordered_set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
-        for (const auto& sequence : SFinder.ReturnCoveredQueues(CurrentField, SetupSequences)) {
+        for (const auto& sequence : SFinder.CoveredQueues(CurrentField, SetupSequences)) {
             PercentageRecordObj.UpdatePercentage(sequence, CurrentSolvePercent);
         };
         
@@ -89,17 +89,17 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     
 
     //manual pruning
-    //set<Piece> r;
-    //if (Layer == 1) {
-    //    r = { 50, 51, 52, };
-    //} if (Layer == 2) {
-    //    r = { 239, 240, 246, 249, 250, 251, 252 };
-    //} if (Layer == 3) {
-    //    r = { 361, 362 };
-    //}
-    //for (auto i : r) {
-    //    candidatePieces.erase({ i });
-    //}
+    set<Piece> r;
+    if (Layer == 1) {
+        r = { 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31, 32, 37, 133, 134, 135, 136, 137, 138, 139, 140, 151, 152, 153, 154, 155, 156, 157, 158, 159, 175, 176, 177, 178, 180, 181, 182, };
+    } if (Layer == 2) {
+        r = { 11, 12, 13, 16, 17, 21, 22, };
+    } if (Layer == 3) {
+        r = { 43, 44, 45, 49, 50, 54, 55, 56, };
+    }
+    for (auto i : r) {
+        candidatePieces.erase({ i });
+    }
 
 
 
@@ -110,10 +110,11 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     vector<std::pair<string, vector<CommonFieldTree>>> OutputNodes;
     int LoopCount = 0;
     for (const auto& SeqMapEntry : newSeqMap) {
-        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
+        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << FieldToString(candidatePieces) << "\n";
         //std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
         for (auto candidatePiece : candidatePieces) {
             //filter out fields that do not cover the current sequences
+            //std::cout << candidatePiece.AsIndex() << "\n";
             set<Piece> nextUsedPieces = CurrentField.AsPieces();
             nextUsedPieces.insert(candidatePiece);
 
@@ -128,7 +129,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
             double currentSolveThresholdPercent = PercentageRecordObj.GetThreshold();
             //bool AboveThreshold = PercentageRecordObj.SetupAboveThreshold(nextUsedPieces); //not used??
             
-            double nextSolvePercent = SFinder.SfinderPercent(nextUsedPieces, CandidateCoverSequences);
+            double nextSolvePercent = SFinder.SolvePercentage(nextUsedPieces, CandidateCoverSequences);
             //std::cout << nextSolvePercent*100 << " < " << currentSolveThresholdPercent*100 << (nextSolvePercent < currentSolveThresholdPercent) << "\n";
             
 
@@ -190,8 +191,9 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(unordered_set<string> C
     }
 
     //manual pruning
-    //candidatePieces = { 27 };
-
+    for (auto i : { 21, 22, 23, 24, 25, }) {
+        candidatePieces.erase({ i });
+    }
 
     SetupPool newPool(Layer + 1, Field({}), BuildCheckerObj, SFinder, Config, PercentageRecordObj);
     vector<CommonFieldTree> OutputNodes;

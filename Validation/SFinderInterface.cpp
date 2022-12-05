@@ -53,7 +53,7 @@ vector<string> SFinderInterface::GlueFumen(const string& UngluedFumen) const {
     return RunCommand("node ./dependancies/glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
 }
 
-double SFinderInterface::SfinderPercent(const Field& field, const unordered_set<string>& CoverSequences) const {
+double SFinderInterface::SolvePercentage(const Field& field, const unordered_set<string>& CoverSequences) const {
     fs::path PatternPath = Config.WorkingDir / R"(temp/pattern_temp.txt)";
     std::ofstream PatternStream(PatternPath);
     for (const auto& coverSequence : CoverSequences) {
@@ -86,7 +86,7 @@ double SFinderInterface::RoundToDP(double x, int DecimalPlaces) const {
     return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
 }
 
-unordered_set<string> SFinderInterface::ReturnCoveredQueues(const Field& field, const unordered_set<string>& CoverSequences) const {
+unordered_set<string> SFinderInterface::CoveredQueues(const Field& field, const unordered_set<string>& CoverSequences) const {
     unordered_set<string> OutputSequences;
 
     unordered_set<string> ExpandedCoverSequences;

@@ -21,7 +21,7 @@ bool Piece::operator==(const Piece& rhs) const {
 }
 
 unordered_set<int> Piece::AsMinoIndex() const {
-    return FieldPermutations.at(Index);
+    return FieldPermutations[Index];
 }
 
 const unordered_map<int, char> Piece::TetrominoDict = {

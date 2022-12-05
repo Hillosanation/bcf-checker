@@ -31,7 +31,7 @@ class SFinderInterface { //handles all calls to external programs
 public:
     SFinderInterface(const Configuration& extConfig) : Config(extConfig) {};
 
-    double SfinderPercent(const Field& field, const unordered_set<string>& CoverSequences) const;
+    double SolvePercentage(const Field& field, const unordered_set<string>& CoverSequences) const;
 
-    unordered_set<string> ReturnCoveredQueues(const Field& field, const unordered_set<string>& CoverSequences) const;
+    unordered_set<string> CoveredQueues(const Field& field, const unordered_set<string>& CoverSequences) const;
 };

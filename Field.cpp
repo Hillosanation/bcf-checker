@@ -1,4 +1,5 @@
 #include "Field.h"
+#include <iostream>
 #include ".\Conversion\FumenConvert.h"
 
 set<Piece> Field::AsPieces() const {
@@ -26,6 +27,7 @@ PlayField Field::AsPlayField(bool Colored = true) const { //numbering follows fu
         }
 
         for (const auto& minoIndex : piece.AsMinoIndex()) {
+            //std::cout << minoIndex << " as " << PieceType << "\n";
             OutputField[minoIndex] = PieceType;
         }
     }

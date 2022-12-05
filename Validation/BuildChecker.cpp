@@ -36,7 +36,7 @@ bool BuildChecker::shouldSearch(const Field& field, bool NoRepeat) {
 
     //checking condition 2
     unordered_set<int> combinedMinoIndex = field.AsMinoIndex();
-    if (combinedMinoIndex.size() % 4 != 0) return false; //all pieces should not intersect
+    if (combinedMinoIndex.size() != field.AsPieces().size() * 4) return false; //all pieces should not intersect
 
     for (const auto& piece : field.AsPieces()) {
         if (!PieceSupported(piece.AsMinoIndex(), combinedMinoIndex)) return false;
