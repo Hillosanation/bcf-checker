@@ -95,7 +95,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     vector<std::pair<string, vector<CommonFieldTree>>> OutputNodes;
     int LoopCount = 0;
     for (const auto& SeqMapEntry : newSeqMap) {
-        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
+        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << FieldToString(candidatePieces) << "\n";
         //std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
         for (auto candidatePiece : candidatePieces) {
             //filter out fields that do not cover the current sequences

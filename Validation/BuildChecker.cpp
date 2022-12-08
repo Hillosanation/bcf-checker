@@ -40,8 +40,14 @@ set<Piece> BuildChecker::FilterExploredPieces(const Field& currentField, const s
 set<Piece> BuildChecker::SearchablePieces(const Field& currentField, const set<Piece>& PossiblePieces, bool NoRepeat) {
     set<Piece> Output;
     set<Piece> CandidatePieces = FilterExploredPieces(currentField, PossiblePieces, NoRepeat);
+    unordered_set<int> FieldMinoIndex = currentField.AsMinoIndex();
 
     for (const auto& piece : CandidatePieces) {
+        for (const auto& minoIndex : piece.AsMinoIndex()) {
+            if FieldMinoIndex.contains(minoIndex) continue; //no intersections
+        }
+        
+        unordered_set<int> combinedMinoIndex = field.AsMinoIndex();
         if (PieceSupported(piece.AsMinoIndex(), currentField.AsMinoIndex())) {
             Output.insert(piece);
         }
