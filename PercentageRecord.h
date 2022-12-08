@@ -34,15 +34,15 @@ class PercentageRecord {
 	double RoundToDP(double x, int DecimalPlaces);
 
 public:
-	double GetThreshold();
+	double GetThreshold() const;
 
 	void UpdatePercentage(string Key, double Value);
 
 	void AddToIgnoredSequences(string newSequence);
 
-	unordered_set<string> ReturnSetupSequences();
+	unordered_set<string> SetupSequences() const;
 
-	string BestPercentagesString();
+	string BestPercentagesString() const;
 
 	bool SetupAboveThreshold(const Field& SetupField);
 

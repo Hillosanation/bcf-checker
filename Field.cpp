@@ -1,6 +1,5 @@
 #include "Field.h"
 #include <iostream>
-#include ".\Conversion\FumenConvert.h"
 
 set<Piece> Field::AsPieces() const {
     return Pieces;
@@ -35,8 +34,7 @@ PlayField Field::AsPlayField(bool Colored = true) const { //numbering follows fu
 }
 
 std::string Field::AsFumen(bool Colored) const {
-    FumenConvert FuConv;
-    return FuConv.ConvertPlayField(AsPlayField(Colored));
+    return Fumen.ConvertPlayField(AsPlayField(Colored));
 }
 
 bool Field::operator==(const Field& rhs) const {

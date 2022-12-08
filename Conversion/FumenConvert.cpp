@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const PlayField& playField) {
+FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const PlayField& playField) const {
 	TBoard Output;
 
 	auto itPrev = playField.begin();
@@ -16,7 +16,7 @@ FumenConvert::TBoard FumenConvert::MakePartialBoardRepresentation(const PlayFiel
 	return Output;
 }
 
-FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& playField) {
+FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& playField) const {
 	TBoardInfo prefix = { 0, 230 - (int)playField.size() }; //prepending omitted empty field
 	TBoardInfo suffix = { 0, 10 }; //appending cheese field
 	TBoard Output = MakePartialBoardRepresentation(playField);
@@ -36,7 +36,7 @@ FumenConvert::TBoard FumenConvert::MakeBoardRepresentation(const PlayField& play
 	return Output;
 }
 
-vector<int> FumenConvert::ConvertTo64(const TBoard& Board) {
+vector<int> FumenConvert::ConvertTo64(const TBoard& Board) const {
 	std::vector<int> Output = {};
 	for (const auto& item : Board) {
 		int total = 240 * item.FumenIndex + item.Consecutive;
@@ -46,7 +46,7 @@ vector<int> FumenConvert::ConvertTo64(const TBoard& Board) {
 	return Output;
 }
 
-string FumenConvert::IntVecToFuString(const vector<int>& IntVec) {
+string FumenConvert::IntVecToFuString(const vector<int>& IntVec) const {
 	std::string Output;
 	for (const auto& item : IntVec) {
 		Output += FumenString[item];
@@ -54,7 +54,7 @@ string FumenConvert::IntVecToFuString(const vector<int>& IntVec) {
 	return Output;
 }
 
-void FumenConvert::test_FieldToFumen() {
+void FumenConvert::test_FieldToFumen() const {
 	PlayField field = {
 		0,0,0,0,0,1,1,
 		0,0,0,0,1,1,1,
@@ -64,7 +64,7 @@ void FumenConvert::test_FieldToFumen() {
 	std::cout << ConvertPlayField(field);
 }
 
-string FumenConvert::ConvertPlayField(const PlayField& playField) {
+string FumenConvert::ConvertPlayField(const PlayField& playField) const {
 	if (playField.size() % FieldWidth != 0) throw std::invalid_argument("playField cannot be split evenly to columns.");
 	TBoard BoardRep = MakeBoardRepresentation(playField);
 	std::vector<int> IntVecRep = ConvertTo64(BoardRep);

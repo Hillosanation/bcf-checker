@@ -4,12 +4,15 @@
 #include <vector>
 #include ".\Piece.h"
 #include ".\Misc\CommonDataTypes.h"
+#include ".\Conversion\FumenConvert.h"
 using std::unordered_set;
 using std::vector;
 using std::set;
 
 class Field //Handles all representations of a field
 {
+    inline const static FumenConvert Fumen;
+
 	const set<Piece> Pieces;
 
     PlayField AsPlayField(bool Colored) const;

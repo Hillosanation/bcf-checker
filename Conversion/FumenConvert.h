@@ -28,16 +28,17 @@ private:
 	const int FieldWidth = 10;
 	const string FumenString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; //weird that this isn't just ascii tbh
 
-	TBoard MakePartialBoardRepresentation(const PlayField& PFFLine);
+	TBoard MakePartialBoardRepresentation(const PlayField& PFFLine) const;
 
-	TBoard MakeBoardRepresentation(const PlayField& PFLine);
+	TBoard MakeBoardRepresentation(const PlayField& PFLine) const;
 
-	vector<int> ConvertTo64(const TBoard& Board);
+	vector<int> ConvertTo64(const TBoard& Board) const;
 
-	string IntVecToFuString(const vector<int>& IntVec);
+	string IntVecToFuString(const vector<int>& IntVec) const;
 
-	void test_FieldToFumen();
+	void test_FieldToFumen() const;
 
+	//No longer need to read data from fumen
 	//std::string TrimFumen(std::string Fumen);
 	//std::vector<int> StringToIntVec(std::string Fumen);
 	//TBoard IntVecToBoard(std::vector<int> IntVecRep);
@@ -47,7 +48,7 @@ private:
 	//void test_FumenToField();
 
 public:
-	string ConvertPlayField(const PlayField& PlayField);
+	string ConvertPlayField(const PlayField& PlayField) const;
 
 	//PlayFieldFilled ConvertFumen(std::string Fumen, int height, int width);
 

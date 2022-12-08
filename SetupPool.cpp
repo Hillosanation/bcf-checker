@@ -6,13 +6,13 @@
 unordered_map<string, unordered_set<string>> SetupPool::CreateNewSeqMap(const unordered_set<string>& Sequences, int SamePieces) {
     unordered_map<string, unordered_set<string>> NewSeqMap = {};
     for (auto Queue : Sequences) {
-        string key = Queue.substr(0, SamePieces);
+        string SequenceHead = Queue.substr(0, SamePieces);
 
-        if (NewSeqMap.contains(key)) {
-            NewSeqMap[key].insert(Queue);
+        if (NewSeqMap.contains(SequenceHead)) {
+            NewSeqMap[SequenceHead].insert(Queue);
         }
         else {
-            NewSeqMap[key] = { Queue };
+            NewSeqMap[SequenceHead] = { Queue };
         }
     }
     return NewSeqMap;
@@ -28,15 +28,13 @@ string SetupPool::FieldToString(const Field& field) { //cosmetic feature
 }
 
 SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_set<string> CoverSequences, double CurrentSolvePercent, string SetupPieceSequence) { //TODO: setup SetupPieceSequence should really be initialized from the SetupPool constructor, but then I would need to use multiple SetupPools at Start() to assign the correct setup sequence to each pool.
-    /*set<int> AllUsedPieceIndexes;*/
     set<Piece> CurrentUsedPieces = PrevField.AsPieces();
     CurrentUsedPieces.insert(CurrentPiece);
     Field CurrentField(CurrentUsedPieces);
 
     if (Layer == Config.GetValue<int>("--placed-pieces")) {
         std::cout << "New setup found: " << FieldToString(CurrentField) << "\n";
-        unordered_set<string> SetupSequences = PercentageRecordObj.ReturnSetupSequences();
-        for (const auto& sequence : SFinder.CoveredQueues(CurrentField, SetupSequences)) {
+        for (const auto& sequence : SFinder.CoveredQueues(CurrentField, PercentageRecordObj.SetupSequences())) {
             PercentageRecordObj.UpdatePercentage(sequence, CurrentSolvePercent);
         };
         
@@ -72,22 +70,9 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
         possibleNextPieces.erase(usedPiece);
     }
 
-    // get union of all remaining pieces & filter pieces with same tetromino as piece
-    set<Piece> candidatePieces;
-    for (const auto &x : possibleNextPieces) {
-        set<Piece> nextUsedPieces = CurrentField.AsPieces();
-        nextUsedPieces.insert(x);
-
-        //std::cout << "checking " << x.AsIndex() << "\n";
-        if (BuildCheckerObj.shouldSearch(nextUsedPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3)) { //this should be vis - 3 instead of 1(as first True) for 4?
-            candidatePieces.insert(x);
-        }
-        else {
-            //std::cout << SetToString(nextUsedPieces) << " failed.\n";
-        }
-    }
+    //TODO: build checker can shoulder the job of filtering out all pieces, and take in PieceIndexesWithTetromino in its class instead of making setupPool do it.
+    set<Piece> candidatePieces = BuildCheckerObj.SearchablePieces(CurrentField, possibleNextPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3);
     
-
     //manual pruning
     //set<Piece> r;
     //if (Layer == 1) {
@@ -128,14 +113,17 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
             //shortcut re-checking percentages already confirmed by sfinder
             double currentSolveThresholdPercent = PercentageRecordObj.GetThreshold();
             //bool AboveThreshold = PercentageRecordObj.SetupAboveThreshold(nextUsedPieces); //not used??
+            //TODO: re-use this function, iirc it records the setups that are in-between the two best perentages, so that we know that that combination works already
+            
+            //TODO: do these in bulk and process the percentages later, not right after one finishes
+            // this can make the bottom half of the loop slide off the nested loops
             
             double nextSolvePercent = SFinder.SolvePercentage(nextUsedPieces, CandidateCoverSequences);
             //std::cout << nextSolvePercent*100 << " < " << currentSolveThresholdPercent*100 << (nextSolvePercent < currentSolveThresholdPercent) << "\n";
-            
 
             if (nextSolvePercent < currentSolveThresholdPercent) continue;
             std::cout << std::fixed << std::setprecision(2);
-            std::cout << "progress: " << FieldToString(nextUsedPieces) << ", " << nextSolvePercent*100 << "\n";
+            std::cout << "progress     : " << FieldToString(nextUsedPieces) << ", " << nextSolvePercent*100 << "\n";
 
             PercentageRecordObj.AddNewPercentage(nextUsedPieces, nextSolvePercent);
             CommonFieldTree result = newPool.ReturnTree(candidatePiece, SeqMapEntry.second, nextSolvePercent, SetupPieceSequence);
@@ -179,16 +167,7 @@ SetupPool::CommonFieldTree SetupPool::ReturnStartingTree(unordered_set<string> C
         possibleNextPieces.insert(newPieceIndexes.begin(), newPieceIndexes.end());
     }
 
-    // get union of all remaining pieces & filter pieces with same tetromino as piece
-    set<Piece> candidatePieces;
-    for (auto x : possibleNextPieces) {
-        if (BuildCheckerObj.shouldSearch(set<Piece>({x}), false /*0 >= Config.GetValue<int>("--visible-pieces") - 3*/)) { //this should be vis - 3 instead of 1(as first True) for 4?
-            candidatePieces.insert(x);
-        }
-        else {
-            //std::cout << SetToString(nextUsedPieces) << " failed.\n";
-        }
-    }
+    set<Piece> candidatePieces = BuildCheckerObj.SearchablePieces(Field({}), possibleNextPieces, false);
 
     //manual pruning
     //for (auto i : { 21, 22, 23, 24, 25, }) {

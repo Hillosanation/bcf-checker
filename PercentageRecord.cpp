@@ -16,7 +16,7 @@ double PercentageRecord::RoundToDP(double x, int DecimalPlaces) {
 	return round(x * pow(10, DecimalPlaces)) / pow(10, DecimalPlaces);
 }
 
-double PercentageRecord::GetThreshold() {
+double PercentageRecord::GetThreshold() const {
 	return RunningMinimum;
 }
 
@@ -37,7 +37,7 @@ void PercentageRecord::AddToIgnoredSequences(string newSequence) {
 	UpdateMinimum();
 }
 
-unordered_set<string> PercentageRecord::ReturnSetupSequences() {
+unordered_set<string> PercentageRecord::SetupSequences() const {
 	unordered_set<string> Output;
 	for (const auto& sequenceResult : SequenceRecord) {
 		Output.insert(sequenceResult.Sequence);
@@ -45,7 +45,7 @@ unordered_set<string> PercentageRecord::ReturnSetupSequences() {
 	return Output;
 }
 
-string PercentageRecord::BestPercentagesString() { //non-functional
+string PercentageRecord::BestPercentagesString() const { //non-functional
 	string Output;
 	for (const auto& sequenceResult : SequenceRecord) {
 		std::ostringstream tmp;

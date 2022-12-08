@@ -1,46 +1,50 @@
 #include "BuildChecker.h"
-#include <stdexcept>
 
-bool BuildChecker::PieceSupported(const unordered_set<int>& PieceMinoIndex, const unordered_set<int>& CombinedMinoIndex) const {
-    //if (PiecePlayField.size() != CombinedPlayField.size()) throw "Size of fields are not equal."; //not needed
+//TODO: update BuildChecker naming, it is outdated
 
-    unordered_set<int> SupportingMinoIndex = CombinedMinoIndex;
-    unordered_set<int> groundMinoIndex = { 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 }; //from the minoIndexes of the ground in 4 line PC
-    SupportingMinoIndex.insert(groundMinoIndex.begin(), groundMinoIndex.end());
+bool BuildChecker::ExhaustedSearchPossibilities(const Field& field, bool NoRepeat) {
+    //ignore if current field was checked
+    if (BuildRecord.find(field) != BuildRecord.end()) return true; 
+    //ignore if mirror of field was checked
+    if (Config.GetValue<bool>("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) return true; 
 
-    unordered_set<int> dependancyMinoIndex = PieceMinoIndex;
-    //remove mino above other minos
-    for (const auto& minoIndex : PieceMinoIndex) {
-        dependancyMinoIndex.erase(minoIndex - 10); //equals to fieldWidth
-    }
-
-    for (const auto& minoIndex : dependancyMinoIndex) {
-        if (SupportingMinoIndex.contains(minoIndex + 10)) return true; //check if there is a mino below any of the dependancy minos
-    }
-
+    //new field, add to record
+    if (NoRepeat) BuildRecord.insert(field);
     return false;
 }
 
-bool BuildChecker::shouldSearch(const Field& field, bool NoRepeat) {
-    //we should only search the current field if 1. it leads to other fields that we haven't yet searched and 2. it is builable
-    //checking condition 1
-    if (Config.GetValue<bool>("--skip-mirror") and BuildRecord.find(field.Mirror()) != BuildRecord.end()) {
-        return false; //ignore if mirror was checked
+bool BuildChecker::PieceSupported(const unordered_set<int> pieceMinoIndexes, const unordered_set<int> fieldMinoIndexes) const {
+    unordered_set<int> FilledMinoIndexes = fieldMinoIndexes;
+    FilledMinoIndexes.insert({ 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 });
+    for (const auto& minoIndex : pieceMinoIndexes) {
+        //piece is supported if any mino directly below it is filled
+        if (fieldMinoIndexes.contains(minoIndex + 10)) { //corresponds to fieldWidth
+            return true;
+        }
     }
-    if (BuildRecord.find(field) != BuildRecord.end()) {
-        return false; //ignore if current was checked
-    }
-    else {
-        if (NoRepeat) BuildRecord.insert(field);
-    }
-
-    //checking condition 2
-    unordered_set<int> combinedMinoIndex = field.AsMinoIndex();
-    if (combinedMinoIndex.size() != field.AsPieces().size() * 4) return false; //checks that all pieces do not intersect
-
-    for (const auto& piece : field.AsPieces()) {
-        if (!PieceSupported(piece.AsMinoIndex(), combinedMinoIndex)) return false;
-    }
-    return true;
+    return false;
 }
 
+set<Piece> BuildChecker::FilterExploredPieces(const Field& currentField, const set<Piece>& PossiblePieces, bool NoRepeat) {
+    set<Piece> Output;
+
+    for (const auto& piece : PossiblePieces) {
+        set<Piece> newFieldPieces = currentField.AsPieces();
+        newFieldPieces.insert(piece);
+        Field newField(newFieldPieces);
+
+        if (!ExhaustedSearchPossibilities(newField, NoRepeat)) Output.insert(piece);
+    }
+}
+
+set<Piece> BuildChecker::SearchablePieces(const Field& currentField, const set<Piece>& PossiblePieces, bool NoRepeat) {
+    set<Piece> Output;
+    set<Piece> CandidatePieces = FilterExploredPieces(currentField, PossiblePieces, NoRepeat);
+
+    for (const auto& piece : CandidatePieces) {
+        if (PieceSupported(piece.AsMinoIndex(), currentField.AsMinoIndex())) {
+            Output.insert(piece);
+        }
+    }
+    return Output;
+}
