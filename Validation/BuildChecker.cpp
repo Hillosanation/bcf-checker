@@ -18,7 +18,7 @@ bool BuildChecker::PieceSupported(const unordered_set<int> pieceMinoIndexes, con
     FilledMinoIndexes.insert({ 40, 41, 42, 43, 44, 45, 46, 47, 48, 49 });
     for (const auto& minoIndex : pieceMinoIndexes) {
         //piece is supported if any mino directly below it is filled
-        if (fieldMinoIndexes.contains(minoIndex + 10)) { //corresponds to fieldWidth
+        if (FilledMinoIndexes.contains(minoIndex + 10)) { //corresponds to fieldWidth
             return true;
         }
     }
@@ -35,6 +35,7 @@ set<Piece> BuildChecker::FilterExploredPieces(const Field& currentField, const s
 
         if (!ExhaustedSearchPossibilities(newField, NoRepeat)) Output.insert(piece);
     }
+    return Output;
 }
 
 set<Piece> BuildChecker::SearchablePieces(const Field& currentField, const set<Piece>& PossiblePieces, bool NoRepeat) {
@@ -43,13 +44,17 @@ set<Piece> BuildChecker::SearchablePieces(const Field& currentField, const set<P
     unordered_set<int> FieldMinoIndex = currentField.AsMinoIndex();
 
     for (const auto& piece : CandidatePieces) {
+        bool Intersection = false;
         for (const auto& minoIndex : piece.AsMinoIndex()) {
-            if FieldMinoIndex.contains(minoIndex) continue; //no intersections
+            if (FieldMinoIndex.contains(minoIndex)) {
+                Intersection = true;
+                break;
+            }
         }
         
-        unordered_set<int> combinedMinoIndex = field.AsMinoIndex();
-        if (PieceSupported(piece.AsMinoIndex(), currentField.AsMinoIndex())) {
+        if (!Intersection and PieceSupported(piece.AsMinoIndex(), currentField.AsMinoIndex())) {
             Output.insert(piece);
+            continue;
         }
     }
     return Output;

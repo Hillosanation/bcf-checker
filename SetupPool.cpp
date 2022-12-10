@@ -58,44 +58,41 @@ SetupPool::CommonFieldTree SetupPool::ReturnTree(Piece CurrentPiece, unordered_s
     unordered_map<string, unordered_set<string>> newSeqMap = CreateNewSeqMap(newCoverSequences, NumSamePieces); //iterate over newSeqDict.values() to get the next CoverSequences
     // for each tetromino seen in sequence, collect (pool.ReturnTree with all setups containing the piece, per candidate piece, per subset of sequence)
 
-    auto randomIt = newSeqMap.begin(); //TODO: this method of getting the truncated letters probably shouldn't be used anyways
-    std::advance(randomIt, rand() % newSeqMap.size());
-    string ReachableTetrominos = randomIt->first.substr(0, 2);
-    set<Piece> possibleNextPieces;
-    for (const auto& possibleTetromino : ReachableTetrominos) {
-        unordered_set<int> newPieceIndexes = PieceIndexesWithTetromino.at(possibleTetromino);
-        possibleNextPieces.insert(newPieceIndexes.begin(), newPieceIndexes.end());
-    }
-    for (const auto& usedPiece : CurrentField.AsPieces()) {
-        possibleNextPieces.erase(usedPiece);
-    }
-
-    //TODO: build checker can shoulder the job of filtering out all pieces, and take in PieceIndexesWithTetromino in its class instead of making setupPool do it.
-    set<Piece> candidatePieces = BuildCheckerObj.SearchablePieces(CurrentField, possibleNextPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3);
-    
-    //manual pruning
-    //set<Piece> r;
-    //if (Layer == 1) {
-    //    r = { 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31, 32, 37, 133, 134, 135, 136, 137, 138, 139, 140, 151, 152, 153, 154, 155, 156, 157, 158, 159, 175, 176, 177, 178, 180, 181, 182, };
-    //} if (Layer == 2) {
-    //    r = { 11, 12, 13, 16, 17, 21, 22, };
-    //} if (Layer == 3) {
-    //    r = { 43, 44, 45, 49, 50, 54, 55, 56, };
-    //}
-    //for (auto i : r) {
-    //    candidatePieces.erase({ i });
-    //}
-
-
-
     SetupPool newPool(Layer + 1, CurrentField, BuildCheckerObj, SFinder, Config, PercentageRecordObj);
-    //eliminate unbuildable fields from candidates
 
-    //only call recursion for sequences with full cover with the picked PieceIndex
     vector<std::pair<string, vector<CommonFieldTree>>> OutputNodes;
     int LoopCount = 0;
     for (const auto& SeqMapEntry : newSeqMap) {
-        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << FieldToString(candidatePieces) << "\n";
+        auto randomIt = newSeqMap.begin(); //TODO: this method of getting the truncated letters probably shouldn't be used anyways, I think this only depends on the key so just do it in the loop below?
+        std::advance(randomIt, rand() % newSeqMap.size());
+        string ReachableTetrominos = randomIt->first.substr(0, 2);
+        set<Piece> possibleNextPieces;
+        for (const auto& possibleTetromino : ReachableTetrominos) {
+            unordered_set<int> newPieceIndexes = PieceIndexesWithTetromino.at(possibleTetromino);
+            possibleNextPieces.insert(newPieceIndexes.begin(), newPieceIndexes.end());
+        }
+        for (const auto& usedPiece : CurrentField.AsPieces()) {
+            possibleNextPieces.erase(usedPiece);
+        }
+
+        //TODO: build checker can shoulder the job of filtering out all pieces, and take in PieceIndexesWithTetromino in its class instead of making setupPool do it.
+        set<Piece> candidatePieces = BuildCheckerObj.SearchablePieces(CurrentField, possibleNextPieces, Layer >= Config.GetValue<int>("--visible-pieces") - 3);
+    
+        //manual pruning
+        //set<Piece> r;
+        //if (Layer == 1) {
+        //    r = { 16, 17, 18, 19, 20, 21, 22, 28, 29, 30, 31, 32, 37, 133, 134, 135, 136, 137, 138, 139, 140, 151, 152, 153, 154, 155, 156, 157, 158, 159, 175, 176, 177, 178, 180, 181, 182, };
+        //} if (Layer == 2) {
+        //    r = { 11, 12, 13, 16, 17, 21, 22, };
+        //} if (Layer == 3) {
+        //    r = { 43, 44, 45, 49, 50, 54, 55, 56, };
+        //}
+        //for (auto i : r) {
+        //    candidatePieces.erase({ i });
+        //}
+
+
+        std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
         //std::cout << "candidates(" << Layer << "): " << FieldToString(CurrentField) << " + " << candidatePieces.size() << "\n";
         for (auto candidatePiece : candidatePieces) {
             //filter out fields that do not cover the current sequences

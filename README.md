@@ -2,14 +2,22 @@
 Checks whether setups are the best possible ones in a given sequence of queues. A successor of the oqb tree-searching code.
 
 # Dependencies
-* [sfinder-fixed-180.jar](https://github.com/Theoluky/sfinder_fixed_180)
+* sfinder v1.40+
+* jstris180.properties by metallicLurker (included in /kicks/)
 
-* [node.js](https://nodejs.org/en/)
 * glueFumen.js (modified from [Marfung37/GluingFumens](https://github.com/Marfung37/GluingFumens), included)
+* [node.js](https://nodejs.org/en/) for glueFumen
+* [yargs](https://yargs.js.org/) for glueFumen (included)
+* [tetris-fumen](https://github.com/knewjade/tetris-fumen) for glueFumen (included)
+* [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for installing yargs and tetris-fumen
 
-* [p-ranav/argparse](https://github.com/p-ranav/argparse) (included)
+* [p-ranav/argparse](https://github.com/p-ranav/argparse) (for copmilation, included)
 
 # Usage
+
+## Preparation
+Copy the `jstris180.properties` file in the dependancies folder and paste it into the `kicks` file in sfinder. This will be needed to run the program.
+
 ## Generate target sequences
 
 While in sfinder's directory, generate the sequences you want the BCF of, using ``util fig``, and pipe the output to a file. 
@@ -28,7 +36,7 @@ Required:
 
 * ``-pp`` (``--placed-pieces``) - The total number of pieces placed in the setup. (Currently cannot exceed 4.) (Ex: ``4``)
 
-* ``-sd`` (``--sfinder-directory``) - The directory ``sfinder.jar`` is located in.
+* ``-sfp`` (``--sfinder-path``) - The path of ``sfinder.jar``.
 
 * ``-op`` (``--output-path``) - The path to the location of the output file. (Ex: ``output/congruent_output_SS-LS.txt``)
 
@@ -44,7 +52,7 @@ Optional:
 
 ``SkipCongruent`` (soon)
 
-Example command: ``& ./bcf-checker.exe @('-vis', '4', '-inc', '0', '-pp', '4', '-sd', <sfinder-directory>, '-op', 'output/congruent_output_SS-LS.txt')`` (powershell)
+Example command: ``& ./bcf-checker.exe @('-vis', '4', '-inc', '0', '-pp', '4', '-sfp', <sfinder-path>, '-op', 'output/congruent_output_SS-LS.txt')`` (powershell)
 
 ## Set percentages in ``input/Best_Percentages.txt``
 

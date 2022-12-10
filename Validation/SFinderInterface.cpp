@@ -21,7 +21,7 @@ vector<string> SFinderInterface::RunCommand(const string& Command, const bool& L
 }
 
 vector<string> SFinderInterface::ReturnSfinderOutput(const string& SFinderCommand) const {
-    fs::path SFinderPath = (std::filesystem::path)(Config.GetValue<string>("--sfinder-directory")) / "sfinder-fixed-180.jar";
+    fs::path SFinderPath = (std::filesystem::path)(Config.GetValue<string>("--sfinder-path"));
     return RunCommand("java -jar \"" + SFinderPath.string() + "\" " + SFinderCommand, false); //TODO: unicode path support
 }
 
@@ -40,7 +40,7 @@ vector<vector<string>> SFinderInterface::SfinderCover(unordered_set<string> Cove
     FieldStream.close();
 
     fs::path CSVFilePath = Config.WorkingDir / "temp/cover_temp.csv";
-    ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d 180 -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
+    ReturnSfinderOutput("cover -H avoid -fp \"" + FieldPath.string() + "\" -pp \"" + PatternPath.string() + "\" -d 180 -K @jstris180 -m no -M normal -P no -o \"" + CSVFilePath.string() + "\"");
     std::ifstream CSVFileStream(CSVFilePath);
     return ReadCSV(CSVFileStream);
 }
@@ -60,7 +60,7 @@ double SFinderInterface::SolvePercentage(const Field& field, const unordered_set
         PatternStream << coverSequence << "\n";
     }
     PatternStream.close();
-    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + field.AsFumen() + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -th -1 -td 0 -fc 0 -d 180");
+    vector<string> SfinderOutput = ReturnSfinderOutput("percent -H use -t " + field.AsFumen() + " -P 1 -pp \"" + PatternPath.string() + "\" -c 4 -th -1 -td 0 -fc 0 -d 180 -K @jstris180");
 
     std::regex Regex(R"(success = ([\d.]+)%)");
     string Result;

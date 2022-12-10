@@ -30,7 +30,6 @@ void PrintTree(SetupPool::CommonFieldTree Tree, int Indent, std::ofstream& Outpu
 }
 
 int main(int argc, char* argv[]) {
-    //prep
     std::cout << "Begin prep\n";
     PercentageRecord PercentageRecordObj;
     Configuration Config(PercentageRecordObj, argc, argv);
@@ -44,7 +43,7 @@ int main(int argc, char* argv[]) {
 
     //compute
 
-    std::cout << "Begin searching for congruents\n";
+    std::cout << "Begin searching\n";
     BuildChecker BuildCheckerObj(Config);
     SFinderInterface SFinder(Config);
 

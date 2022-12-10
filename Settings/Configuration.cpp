@@ -20,7 +20,7 @@ Configuration::Configuration(PercentageRecord& extPercentageRecordObj, int argc,
 		.scan<'g', double>()
 		.help("Include current tree if it contains at least this percentage of maximum child nodes");
 
-	parser.add_argument("-sd", "--sfinder-directory")
+	parser.add_argument("-sfp", "--sfinder-path")
 		.required();
 	parser.add_argument("-sp", "--sequence-path")
 		.default_value((string)"input/sequence.txt");
