@@ -2,7 +2,7 @@
 Checks whether setups are the best possible ones in a given sequence of queues. A successor of the oqb tree-searching code.
 
 # Dependencies
-* sfinder v1.40+
+* [sfinder](https://github.com/knewjade/solution-finder/releases/) v1.40+
 * jstris180.properties by metallicLurker (included in /kicks/)
 
 * glueFumen.js (modified from [Marfung37/GluingFumens](https://github.com/Marfung37/GluingFumens), included)
