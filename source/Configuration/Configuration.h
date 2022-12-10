@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <filesystem>
 #include <vector>
-#include "../PercentageRecord.h"
+#include "../Validation/PercentageRecord.h"
 #include "../dependancies/argparse-2.6/include/argparse/argparse.hpp"
 using std::string;
 using std::vector;

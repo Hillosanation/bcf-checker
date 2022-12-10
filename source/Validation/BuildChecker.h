@@ -1,8 +1,8 @@
 #pragma once
 #include <set>
 #include <unordered_set>
-#include "../Settings/Configuration.h"
-#include "../Field.h"
+#include "../Configuration/Configuration.h"
+#include "../Format/Field.h"
 //#include "../Misc/CommonDataTypes.h"
 
 class BuildChecker {

@@ -3,8 +3,8 @@
 #include <set>
 #include <vector>
 #include ".\Piece.h"
-#include ".\Misc\CommonDataTypes.h"
-#include ".\Conversion\FumenConvert.h"
+#include "..\Misc\CommonDataTypes.h"
+#include "..\Format\FumenConvert.h"
 using std::unordered_set;
 using std::vector;
 using std::set;

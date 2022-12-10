@@ -4,7 +4,7 @@
 #include <iostream>
 #include <filesystem>
 #include "./SFinderInterface.h"
-#include "../Settings/Configuration.h"
+#include "../Configuration/Configuration.h"
 
 vector<string> SFinderInterface::RunCommand(const string& Command, const bool& LogCommand = true) const {
     string WrappedCommand = "\"" + Command + "\"";
@@ -50,7 +50,7 @@ vector<string> SFinderInterface::GlueFumen(const string& UngluedFumen) const {
     std::ofstream FumenStream(FumenPath);
     FumenStream << UngluedFumen << "\n";
     FumenStream.close();
-    return RunCommand("node ./dependancies/glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
+    return RunCommand("node ./glueFumen.js --fp \"" + FumenPath.string() + "\" --s --so");
 }
 
 double SFinderInterface::SolvePercentage(const Field& field, const unordered_set<string>& CoverSequences) const {

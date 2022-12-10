@@ -5,11 +5,11 @@
 #include <string>
 #include <unordered_map>
 
-#include "./Validation/BuildChecker.h"
-#include "./Validation/SFinderInterface.h"
-#include "./Settings/Configuration.h"
-#include "./Misc/CommonDataTypes.h"
-#include "./PercentageRecord.h"
+#include "../Validation/BuildChecker.h"
+#include "../Validation/SFinderInterface.h"
+#include "../Configuration/Configuration.h"
+#include "../Misc/CommonDataTypes.h"
+#include "../Validation/PercentageRecord.h"
 
 using std::set;
 using std::unordered_set;

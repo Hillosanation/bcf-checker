@@ -129,27 +129,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="PercentageRecord.cpp" />
-    <ClCompile Include="Piece.cpp" />
-    <ClCompile Include="Validation\BuildChecker.cpp" />
-    <ClCompile Include="Misc\CommonDataTypes.cpp" />
-    <ClCompile Include="Settings\Configuration.cpp" />
-    <ClCompile Include="Conversion\FumenConvert.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="SetupPool.cpp" />
-    <ClCompile Include="Validation\SFinderInterface.cpp" />
+    <ClCompile Include="source\Configuration\Configuration.cpp" />
+    <ClCompile Include="source\Format\Field.cpp" />
+    <ClCompile Include="source\Format\FumenConvert.cpp" />
+    <ClCompile Include="source\Format\Piece.cpp" />
+    <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\Misc\CommonDataTypes.cpp" />
+    <ClCompile Include="source\SetupPool\SetupPool.cpp" />
+    <ClCompile Include="source\Validation\BuildChecker.cpp" />
+    <ClCompile Include="source\Validation\PercentageRecord.cpp" />
+    <ClCompile Include="source\Validation\SFinderInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="PercentageRecord.h" />
-    <ClInclude Include="Piece.h" />
-    <ClInclude Include="Validation\BuildChecker.h" />
-    <ClInclude Include="Misc\CommonDataTypes.h" />
-    <ClInclude Include="Settings\Configuration.h" />
-    <ClInclude Include="Conversion\FumenConvert.h" />
-    <ClInclude Include="SetupPool.h" />
-    <ClInclude Include="Validation\SFinderInterface.h" />
+    <ClInclude Include="source\Configuration\Configuration.h" />
+    <ClInclude Include="source\Format\Field.h" />
+    <ClInclude Include="source\Format\FumenConvert.h" />
+    <ClInclude Include="source\Format\Piece.h" />
+    <ClInclude Include="source\Misc\CommonDataTypes.h" />
+    <ClInclude Include="source\SetupPool\SetupPool.h" />
+    <ClInclude Include="source\Validation\BuildChecker.h" />
+    <ClInclude Include="source\Validation\PercentageRecord.h" />
+    <ClInclude Include="source\Validation\SFinderInterface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

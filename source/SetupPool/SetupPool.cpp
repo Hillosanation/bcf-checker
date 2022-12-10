@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "./SetupPool.h"
-#include "./Field.h"
+#include "../Format/Field.h"
 
 unordered_map<string, unordered_set<string>> SetupPool::CreateNewSeqMap(const unordered_set<string>& Sequences, int SamePieces) {
     unordered_map<string, unordered_set<string>> NewSeqMap = {};

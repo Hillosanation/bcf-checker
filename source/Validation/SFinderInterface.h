@@ -7,8 +7,8 @@ using std::vector;
 using std::unordered_set;
 #include <filesystem>
 #include "../Misc/CommonDataTypes.h"
-#include "../Settings/Configuration.h"
-#include "../Field.h"
+#include "../Configuration/Configuration.h"
+#include "../Format/Field.h"
 
 namespace fs = std::filesystem;
 

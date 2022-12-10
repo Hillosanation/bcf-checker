@@ -15,63 +15,63 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SetupPool.cpp">
+    <ClCompile Include="source\Format\FumenConvert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Conversion\FumenConvert.cpp">
+    <ClCompile Include="source\Format\Piece.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="source\Format\Field.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Validation\BuildChecker.cpp">
+    <ClCompile Include="source\Misc\CommonDataTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Misc\CommonDataTypes.cpp">
+    <ClCompile Include="source\SetupPool\SetupPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Settings\Configuration.cpp">
+    <ClCompile Include="source\Validation\SFinderInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Validation\SFinderInterface.cpp">
+    <ClCompile Include="source\Validation\BuildChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PercentageRecord.cpp">
+    <ClCompile Include="source\Validation\PercentageRecord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Field.cpp">
+    <ClCompile Include="source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Piece.cpp">
+    <ClCompile Include="source\Configuration\Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Conversion\FumenConvert.h">
+    <ClInclude Include="source\Format\FumenConvert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SetupPool.h">
+    <ClInclude Include="source\Format\Piece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Validation\BuildChecker.h">
+    <ClInclude Include="source\Format\Field.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Misc\CommonDataTypes.h">
+    <ClInclude Include="source\Misc\CommonDataTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Settings\Configuration.h">
+    <ClInclude Include="source\SetupPool\SetupPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Validation\SFinderInterface.h">
+    <ClInclude Include="source\Validation\PercentageRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PercentageRecord.h">
+    <ClInclude Include="source\Validation\SFinderInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Field.h">
+    <ClInclude Include="source\Validation\BuildChecker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Piece.h">
+    <ClInclude Include="source\Configuration\Configuration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
-#include "./Settings/Configuration.h"
+#include "./Configuration/Configuration.h"
 #include "./Misc/CommonDataTypes.h"
-#include "./PercentageRecord.h"
-#include "./SetupPool.h"
+#include "./Validation/PercentageRecord.h"
+#include "./SetupPool/SetupPool.h"
 #include <iostream>
 #include <fstream>
 #include <unordered_set>
