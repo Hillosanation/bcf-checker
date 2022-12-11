@@ -15,9 +15,6 @@ Checks whether setups are the best possible ones in a given sequence of queues. 
 
 # Usage
 
-## Preparation
-Copy the `jstris180.properties` file in the dependancies folder and paste it into the `kicks` file in sfinder. This will be needed to run the program.
-
 ## Generate target sequences
 
 While in sfinder's directory, generate the sequences you want the BCF of, using ``util fig``, and pipe the output to a file. 
