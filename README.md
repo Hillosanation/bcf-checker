@@ -7,11 +7,11 @@ Checks whether setups are the best possible ones in a given sequence of queues. 
 
 * glueFumen.js (modified from [Marfung37/GluingFumens](https://github.com/Marfung37/GluingFumens), included)
 * [node.js](https://nodejs.org/en/) for glueFumen
-* [yargs](https://yargs.js.org/) for glueFumen (included)
-* [tetris-fumen](https://github.com/knewjade/tetris-fumen) for glueFumen (included)
+* [yargs](https://yargs.js.org/) for glueFumen
+* [tetris-fumen](https://github.com/knewjade/tetris-fumen) for glueFumen
 * [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) for installing yargs and tetris-fumen
 
-* [p-ranav/argparse](https://github.com/p-ranav/argparse) (for copmilation, included)
+* [p-ranav/argparse](https://github.com/p-ranav/argparse) (for copmilation only, included)
 
 # Usage
 
